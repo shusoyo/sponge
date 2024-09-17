@@ -20,7 +20,7 @@ void StreamReassembler::push_substring(const std::string &data, const size_t ind
 
   if (difference == 0 or (difference > 0 and difference < i64(data.size()))) {
     std::string_view view(data);
-    view = view.substr(difference, std::min(available_capacity(), data.size() - size_t(difference)));
+    view = view.substr(difference, std::min(_output.remaining_capacity(), data.size() - size_t(difference)));
 
     for (size_t i = 0; i < view.size() && next_byte + i < buffer.size(); i++) {
       if (buffer[next_byte + i].second) {
