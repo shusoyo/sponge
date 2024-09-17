@@ -2,6 +2,7 @@
 #define SPONGE_LIBSPONGE_STREAM_REASSEMBLER_HH
 
 #include "byte_stream.hh"
+#include <cstddef>
 #include <cstdint>
 #include <string>
 
@@ -13,6 +14,11 @@ private:
 
   ByteStream _output;    //!< The reassembled in-order byte stream
   size_t _capacity;      //!< The maximum number of bytes
+  size_t _byte_pending;
+  size_t next_byte;
+  std::vector<std::pair<char, bool>> buffer;
+  size_t end_index;
+  bool is_get_end;
 
 public:
   //! \brief Construct a `StreamReassembler` that will store up to `capacity` bytes.
@@ -49,6 +55,8 @@ public:
   //! \brief Is the internal state empty (other than the output stream)?
   //! \returns `true` if no substrings are waiting to be assembled
   bool empty() const;
+
+  size_t available_capacity() const;
 };
 
 #endif    // SPONGE_LIBSPONGE_STREAM_REASSEMBLER_HH
