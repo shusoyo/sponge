@@ -1,4 +1,5 @@
 #include "byte_stream.hh"
+#include <cstddef>
 
 // Dummy implementation of a flow-controlled in-memory byte stream.
 
@@ -10,62 +11,90 @@
 template<typename... Targs>
 void DUMMY_CODE(Targs &&.../* unused */) {}
 
-using namespace std;
+ByteStream::ByteStream(const size_t capacity) : capacity_(capacity), buffer(), byte_pushed_(), byte_popped_() {}
 
-ByteStream::ByteStream(const size_t capacity) {
-  DUMMY_CODE(capacity);
-}
+size_t ByteStream::write(const std::string &data) {
+  size_t can_write_size = std::min(remaining_capacity(), data.size());
+  byte_pushed_ += can_write_size;
 
-size_t ByteStream::write(const string &data) {
-  DUMMY_CODE(data);
-  return {};
+  if (can_write_size > 0) {
+    buffer.emplace_back(data.substr(0, can_write_size));
+  }
+
+  return can_write_size;
 }
 
 //! \param[in] len bytes will be copied from the output side of the buffer
-string ByteStream::peek_output(const size_t len) const {
-  DUMMY_CODE(len);
-  return {};
+std::string ByteStream::peek_output(const size_t len) const {
+  std::string output {};
+  size_t length = len;
+
+  for (auto x : buffer) {
+    if (length >= x.size()) {
+      output.append(x);
+      length -= x.size();
+    } else {
+      output.append(x.substr(0, length));
+      break;
+    }
+  }
+
+  return output;
 }
 
 //! \param[in] len bytes will be removed from the output side of the buffer
 void ByteStream::pop_output(const size_t len) {
-  DUMMY_CODE(len);
+  size_t length = len;
+
+  while (length != 0) {
+    auto &s = buffer.front();
+    if (length >= s.size()) {
+      length -= s.size();
+      buffer.pop_front();
+    } else {
+      s = s.substr(length);
+      break;
+    }
+  }
+
+  byte_popped_ += len;
 }
 
 //! Read (i.e., copy and then pop) the next "len" bytes of the stream
 //! \param[in] len bytes will be popped and returned
 //! \returns a string
 std::string ByteStream::read(const size_t len) {
-  DUMMY_CODE(len);
-  return {};
+  return peek_output(len);
 }
 
-void ByteStream::end_input() {}
+void ByteStream::end_input() {
+  end_input_ = true;
+}
 
 bool ByteStream::input_ended() const {
-  return {};
+  return end_input_;
 }
 
 size_t ByteStream::buffer_size() const {
-  return {};
+  return byte_pushed_ - byte_popped_;
 }
 
 bool ByteStream::buffer_empty() const {
-  return {};
+  return buffer_size() == 0;
 }
 
 bool ByteStream::eof() const {
-  return false;
+  return byte_popped_ == byte_pushed_ and input_ended();
 }
 
 size_t ByteStream::bytes_written() const {
-  return {};
+  return byte_pushed_;
 }
 
 size_t ByteStream::bytes_read() const {
-  return {};
+  return byte_popped_;
 }
 
 size_t ByteStream::remaining_capacity() const {
-  return {};
+  return capacity_ - buffer_size();
 }

@@ -1,6 +1,8 @@
 #ifndef SPONGE_LIBSPONGE_BYTE_STREAM_HH
 #define SPONGE_LIBSPONGE_BYTE_STREAM_HH
 
+#include <cstddef>
+#include <queue>
 #include <string>
 
 //! \brief An in-order byte stream.
@@ -16,7 +18,12 @@ private:
   // all, but if any of your tests are taking longer than a second,
   // that's a sign that you probably want to keep exploring
   // different approaches.
+  size_t capacity_;
 
+  std::deque<std::string> buffer;
+  size_t byte_pushed_;
+  size_t byte_popped_;
+  bool end_input_ {};
   bool _error {};    //!< Flag indicating that the stream suffered an error.
 
 public:
