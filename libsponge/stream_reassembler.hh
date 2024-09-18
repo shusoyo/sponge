@@ -17,7 +17,7 @@ private:
   size_t _byte_pending;
   size_t next_byte;
   std::vector<std::pair<char, bool>> buffer;
-  size_t end_index;
+  int64_t end_index;
   bool is_get_end;
 
 public:
@@ -57,6 +57,8 @@ public:
   bool empty() const;
 
   size_t available_capacity() const;
+
+  uint64_t checkpoint() const;
 };
 
 #endif    // SPONGE_LIBSPONGE_STREAM_REASSEMBLER_HH
