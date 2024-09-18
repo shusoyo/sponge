@@ -2,7 +2,6 @@
 #define SPONGE_LIBSPONGE_TCP_STATE
 
 #include "tcp_receiver.hh"
-
 #include <string>
 
 //! \brief Summary of a TCPConnection's internal state
@@ -20,16 +19,16 @@
 //! sender/receiver states and two variables that belong to the
 //! overarching TCPConnection object.
 class TCPState {
-  public:
-    //! \brief Summarize the state of a TCPReceiver in a string
-    static std::string state_summary(const TCPReceiver &receiver);
+public:
+  //! \brief Summarize the state of a TCPReceiver in a string
+  static std::string state_summary(const TCPReceiver &receiver);
 };
 
 namespace TCPReceiverStateSummary {
-const std::string ERROR = "error (connection was reset)";
-const std::string LISTEN = "waiting for SYN: ackno is empty";
-const std::string SYN_RECV = "SYN received (ackno exists), and input to stream hasn't ended";
-const std::string FIN_RECV = "input to stream has ended";
-}  // namespace TCPReceiverStateSummary
+  const std::string ERROR = "error (connection was reset)";
+  const std::string LISTEN = "waiting for SYN: ackno is empty";
+  const std::string SYN_RECV = "SYN received (ackno exists), and input to stream hasn't ended";
+  const std::string FIN_RECV = "input to stream has ended";
+}    // namespace TCPReceiverStateSummary
 
-#endif  // SPONGE_LIBSPONGE_TCP_STATE
+#endif    // SPONGE_LIBSPONGE_TCP_STATE
