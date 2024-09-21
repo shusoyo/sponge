@@ -53,7 +53,8 @@ public:
   }
 
   //! \brief Discard the first `n` bytes of the string (does not require a copy or move)
-  //! \note Doesn't free any memory until the whole string has been discarded in all copies of the Buffer.
+  //! \note Doesn't free any memory until the whole string has been discarded in all copies of the
+  //! Buffer.
   void remove_prefix(const size_t n);
 };
 

@@ -20,8 +20,9 @@ ParseResult TCPHeader::parse(NetParser &p) {
   ackno = WrappingInt32 {p.u32()};    // ack number
   doff = p.u8() >> 4;                 // data offset
 
-  const uint8_t fl_b = p.u8();                    // byte including flags
-  urg = static_cast<bool>(fl_b & 0b0010'0000);    // binary literals and ' digit separator since C++14!!!
+  const uint8_t fl_b = p.u8();    // byte including flags
+  urg = static_cast<bool>(
+      fl_b & 0b0010'0000);    // binary literals and ' digit separator since C++14!!!
   ack = static_cast<bool>(fl_b & 0b0001'0000);
   psh = static_cast<bool>(fl_b & 0b0000'1000);
   rst = static_cast<bool>(fl_b & 0b0000'0100);
@@ -84,8 +85,8 @@ string TCPHeader::to_string() const {
      << "TCP seqno: " << seqno << '\n'
      << "TCP ackno: " << ackno << '\n'
      << "TCP doff: " << +doff << '\n'
-     << "Flags: urg: " << urg << " ack: " << ack << " psh: " << psh << " rst: " << rst << " syn: " << syn
-     << " fin: " << fin << '\n'
+     << "Flags: urg: " << urg << " ack: " << ack << " psh: " << psh << " rst: " << rst
+     << " syn: " << syn << " fin: " << fin << '\n'
      << "TCP winsize: " << +win << '\n'
      << "TCP cksum: " << +cksum << '\n'
      << "TCP uptr: " << +uptr << '\n';
@@ -94,14 +95,14 @@ string TCPHeader::to_string() const {
 
 string TCPHeader::summary() const {
   stringstream ss {};
-  ss << "Header(flags=" << (syn ? "S" : "") << (ack ? "A" : "") << (rst ? "R" : "") << (fin ? "F" : "")
-     << ",seqno=" << seqno << ",ack=" << ackno << ",win=" << win << ")";
+  ss << "Header(flags=" << (syn ? "S" : "") << (ack ? "A" : "") << (rst ? "R" : "")
+     << (fin ? "F" : "") << ",seqno=" << seqno << ",ack=" << ackno << ",win=" << win << ")";
   return ss.str();
 }
 
 bool TCPHeader::operator==(const TCPHeader &other) const {
   // TODO(aozdemir) more complete check (right now we omit cksum, src, dst
-  return seqno == other.seqno && ackno == other.ackno && doff == other.doff && urg == other.urg && ack == other.ack &&
-         psh == other.psh && rst == other.rst && syn == other.syn && fin == other.fin && win == other.win &&
-         uptr == other.uptr;
+  return seqno == other.seqno && ackno == other.ackno && doff == other.doff && urg == other.urg &&
+         ack == other.ack && psh == other.psh && rst == other.rst && syn == other.syn &&
+         fin == other.fin && win == other.win && uptr == other.uptr;
 }

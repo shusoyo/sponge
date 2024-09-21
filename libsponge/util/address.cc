@@ -68,15 +68,17 @@ Address::Address(const string &node, const string &service, const addrinfo &hint
   auto addrinfo_deleter = [](addrinfo *const x) {
     freeaddrinfo(x);
   };
-  unique_ptr<addrinfo, decltype(addrinfo_deleter)> wrapped_address(resolved_address, std::move(addrinfo_deleter));
+  unique_ptr<addrinfo, decltype(addrinfo_deleter)> wrapped_address(resolved_address,
+      std::move(addrinfo_deleter));
 
   // assign to our private members (making sure size fits)
   *this = Address(wrapped_address->ai_addr, wrapped_address->ai_addrlen);
 }
 
 //! \brief Build a `struct addrinfo` containing hints for [getaddrinfo(3)](\ref man3::getaddrinfo)
-//! \param[in] ai_flags is the value of the `ai_flags` field in the [struct addrinfo](\ref man3::getaddrinfo)
-//! \param[in] ai_family is the value of the `ai_family` field in the [struct addrinfo](\ref man3::getaddrinfo)
+//! \param[in] ai_flags is the value of the `ai_flags` field in the [struct addrinfo](\ref
+//! man3::getaddrinfo) \param[in] ai_family is the value of the `ai_family` field in the [struct
+//! addrinfo](\ref man3::getaddrinfo)
 static inline addrinfo make_hints(const int ai_flags, const int ai_family) {
   addrinfo hints {};    // value initialized to all zeros
   hints.ai_flags = ai_flags;
@@ -100,8 +102,8 @@ pair<string, uint16_t> Address::ip_port() const {
   array<char, NI_MAXHOST> ip {};
   array<char, NI_MAXSERV> port {};
 
-  const int gni_ret =
-      getnameinfo(_address, _size, ip.data(), ip.size(), port.data(), port.size(), NI_NUMERICHOST | NI_NUMERICSERV);
+  const int gni_ret = getnameinfo(_address, _size, ip.data(), ip.size(), port.data(), port.size(),
+      NI_NUMERICHOST | NI_NUMERICSERV);
   if (gni_ret != 0) {
     throw tagged_error(gai_error_category(), "getnameinfo", gni_ret);
   }

@@ -37,7 +37,8 @@ FileDescriptor::FDWrapper::~FDWrapper() {
 FileDescriptor::FileDescriptor(const int fd) : _internal_fd(make_shared<FDWrapper>(fd)) {}
 
 //! Private constructor used by duplicate()
-FileDescriptor::FileDescriptor(shared_ptr<FDWrapper> other_shared_ptr) : _internal_fd(move(other_shared_ptr)) {}
+FileDescriptor::FileDescriptor(shared_ptr<FDWrapper> other_shared_ptr)
+    : _internal_fd(move(other_shared_ptr)) {}
 
 //! \returns a copy of this FileDescriptor
 FileDescriptor FileDescriptor::duplicate() const {
@@ -79,7 +80,8 @@ size_t FileDescriptor::write(BufferViewList buffer, const bool write_all) {
   do {
     auto iovecs = buffer.as_iovecs();
 
-    const ssize_t bytes_written = SystemCall("writev", ::writev(fd_num(), iovecs.data(), iovecs.size()));
+    const ssize_t bytes_written =
+        SystemCall("writev", ::writev(fd_num(), iovecs.data(), iovecs.size()));
     if (bytes_written == 0 and buffer.size() != 0) {
       throw runtime_error("write returned 0 given non-empty input buffer");
     }

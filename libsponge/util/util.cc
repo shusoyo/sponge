@@ -19,8 +19,9 @@ uint64_t timestamp_ms() {
 
 //! \param[in] attempt is the name of the syscall to try (for error reporting)
 //! \param[in] return_value is the return value of the syscall
-//! \param[in] errno_mask is any errno value that is acceptable, e.g., `EAGAIN` when reading a non-blocking fd
-//! \details This function works for any syscall that returns less than 0 on error and sets errno:
+//! \param[in] errno_mask is any errno value that is acceptable, e.g., `EAGAIN` when reading a
+//! non-blocking fd \details This function works for any syscall that returns less than 0 on error
+//! and sets errno:
 //!
 //! For example, to wrap a call to [open(2)](\ref man2::open), you might say:
 //!
@@ -48,8 +49,8 @@ int SystemCall(const char *attempt, const int return_value, const int errno_mask
 
 //! \param[in] attempt is the name of the syscall to try (for error reporting)
 //! \param[in] return_value is the return value of the syscall
-//! \param[in] errno_mask is any errno value that is acceptable, e.g., `EAGAIN` when reading a non-blocking fd
-//! \details see the other SystemCall() documentation for more details
+//! \param[in] errno_mask is any errno value that is acceptable, e.g., `EAGAIN` when reading a
+//! non-blocking fd \details see the other SystemCall() documentation for more details
 int SystemCall(const string &attempt, const int return_value, const int errno_mask) {
   return SystemCall(attempt.c_str(), return_value, errno_mask);
 }
@@ -75,16 +76,18 @@ mt19937 get_random_generator() {
 //! \details This class can be used to either check or compute an Internet checksum
 //! (e.g., for an IP datagram header or a TCP segment).
 //!
-//! The Internet checksum is defined such that evaluating inet_cksum() on a TCP segment (IP datagram, etc)
-//! containing a correct checksum header will return zero. In other words, if you read a correct TCP segment
-//! off the wire and pass it untouched to inet_cksum(), the return value will be 0.
+//! The Internet checksum is defined such that evaluating inet_cksum() on a TCP segment (IP
+//! datagram, etc) containing a correct checksum header will return zero. In other words, if you
+//! read a correct TCP segment off the wire and pass it untouched to inet_cksum(), the return value
+//! will be 0.
 //!
-//! Meanwhile, to compute the checksum for an outgoing TCP segment (IP datagram, etc.), you must first set
-//! the checksum header to zero, then call inet_cksum(), and finally set the checksum header to the return
-//! value.
+//! Meanwhile, to compute the checksum for an outgoing TCP segment (IP datagram, etc.), you must
+//! first set the checksum header to zero, then call inet_cksum(), and finally set the checksum
+//! header to the return value.
 //!
-//! For more information, see the [Wikipedia page](https://en.wikipedia.org/wiki/IPv4_header_checksum)
-//! on the Internet checksum, and consult the [IP](\ref rfc::rfc791) and [TCP](\ref rfc::rfc793) RFCs.
+//! For more information, see the [Wikipedia
+//! page](https://en.wikipedia.org/wiki/IPv4_header_checksum) on the Internet checksum, and consult
+//! the [IP](\ref rfc::rfc791) and [TCP](\ref rfc::rfc793) RFCs.
 InternetChecksum::InternetChecksum(const uint32_t initial_sum) : _sum(initial_sum) {}
 
 void InternetChecksum::add(std::string_view data) {

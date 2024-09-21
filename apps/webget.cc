@@ -8,7 +8,8 @@ using namespace std;
 void get_URL(const string &host, const string &path) {
   TCPSocket client_socket;
   client_socket.connect(Address(host, "http"));
-  client_socket.write("GET " + path + " HTTP/1.1\r\n" + "Host: " + host + "\r\n" + "Connection: close\r\n" + "\r\n");
+  client_socket.write("GET " + path + " HTTP/1.1\r\n" + "Host: " + host + "\r\n" +
+                      "Connection: close\r\n" + "\r\n");
   // client_socket.shutdown(SHUT_WR);
 
   while (!client_socket.eof()) {

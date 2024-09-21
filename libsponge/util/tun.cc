@@ -11,8 +11,8 @@ static constexpr const char *CLONEDEV = "/dev/net/tun";
 using namespace std;
 
 //! \param[in] devname is the name of the TUN or TAP device, specified at its creation.
-//! \param[in] is_tun is `true` for a TUN device (expects IP datagrams), or `false` for a TAP device (expects Ethernet
-//! frames)
+//! \param[in] is_tun is `true` for a TUN device (expects IP datagrams), or `false` for a TAP device
+//! (expects Ethernet frames)
 //!
 //! To create a TUN device, you should already have run
 //!

@@ -11,7 +11,8 @@
 template<typename... Targs>
 void DUMMY_CODE(Targs &&.../* unused */) {}
 
-ByteStream::ByteStream(const size_t capacity) : capacity_(capacity), buffer(), byte_pushed_(), byte_popped_() {}
+ByteStream::ByteStream(const size_t capacity)
+    : capacity_(capacity), buffer(), byte_pushed_(), byte_popped_() {}
 
 size_t ByteStream::write(const std::string &data) {
   size_t can_write_size = std::min(remaining_capacity(), data.size());

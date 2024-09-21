@@ -25,7 +25,8 @@ BufferList::operator Buffer() const {
     case 1:
       return _buffers[0];
     default: {
-      throw runtime_error("BufferList: please use concatenate() to combine a multi-Buffer BufferList into one Buffer");
+      throw runtime_error(
+          "BufferList: please use concatenate() to combine a multi-Buffer BufferList into one Buffer");
     }
   }
 }

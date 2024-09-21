@@ -9,7 +9,8 @@
 #include <sys/socket.h>
 
 //! \brief Base class for network sockets (TCP, UDP, etc.)
-//! \details Socket is generally used via a subclass. See TCPSocket and UDPSocket for usage examples.
+//! \details Socket is generally used via a subclass. See TCPSocket and UDPSocket for usage
+//! examples.
 class Socket : public FileDescriptor {
 private:
   //! Get the local or peer address the socket is connected to
@@ -28,7 +29,8 @@ protected:
   void setsockopt(const int level, const int option, const option_type &option_value);
 
 public:
-  //! Bind a socket to a specified address with [bind(2)](\ref man2::bind), usually for listen/accept
+  //! Bind a socket to a specified address with [bind(2)](\ref man2::bind), usually for
+  //! listen/accept
   void bind(const Address &address);
 
   //! Connect a socket to a specified peer address with [connect(2)](\ref man2::connect)

@@ -55,7 +55,8 @@ public:
   //! Construct from a file descriptor number returned by the kernel
   explicit FileDescriptor(const int fd);
 
-  //! Free the std::shared_ptr; the FDWrapper destructor calls close() when the refcount goes to zero.
+  //! Free the std::shared_ptr; the FDWrapper destructor calls close() when the refcount goes to
+  //! zero.
   ~FileDescriptor() = default;
 
   //! Read up to `limit` bytes
@@ -120,11 +121,14 @@ public:
   //! \name Copy/move constructor/assignment operators
   //! FileDescriptor can be moved, but cannot be copied (but see duplicate())
   //!@{
-  FileDescriptor(const FileDescriptor &other) = delete;               //!< \brief copy construction is forbidden
-  FileDescriptor &operator=(const FileDescriptor &other) = delete;    //!< \brief copy assignment is forbidden
-  FileDescriptor(FileDescriptor &&other) = default;                   //!< \brief move construction is allowed
-  FileDescriptor &operator=(FileDescriptor &&other) = default;        //!< \brief move assignment is allowed
-                                                                      //!@}
+  FileDescriptor(
+      const FileDescriptor &other) = delete;    //!< \brief copy construction is forbidden
+  FileDescriptor &operator=(
+      const FileDescriptor &other) = delete;           //!< \brief copy assignment is forbidden
+  FileDescriptor(FileDescriptor &&other) = default;    //!< \brief move construction is allowed
+  FileDescriptor &operator=(
+      FileDescriptor &&other) = default;    //!< \brief move assignment is allowed
+                                            //!@}
 };
 
 //! \class FileDescriptor

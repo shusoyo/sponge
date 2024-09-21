@@ -19,15 +19,13 @@ public:
   }    //!< Access raw stored value
 };
 
-//! Transform a 64-bit absolute sequence number (zero-indexed) into a 32-bit relative sequence number
-//! \param n the absolute sequence number
-//! \param isn the initial sequence number
-//! \returns the relative sequence number
+//! Transform a 64-bit absolute sequence number (zero-indexed) into a 32-bit relative sequence
+//! number \param n the absolute sequence number \param isn the initial sequence number \returns the
+//! relative sequence number
 WrappingInt32 wrap(uint64_t n, WrappingInt32 isn);
 
-//! Transform a 32-bit relative sequence number into a 64-bit absolute sequence number (zero-indexed)
-//! \param n The relative sequence number
-//! \param isn The initial sequence number
+//! Transform a 32-bit relative sequence number into a 64-bit absolute sequence number
+//! (zero-indexed) \param n The relative sequence number \param isn The initial sequence number
 //! \param checkpoint A recent absolute sequence number
 //! \returns the absolute sequence number that wraps to `n` and is closest to `checkpoint`
 //!
