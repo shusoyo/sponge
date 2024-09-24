@@ -8,7 +8,7 @@
 //! \note TCP options are not supported
 struct TCPHeader {
   static constexpr size_t LENGTH =
-      20;    //!< [TCP](\ref rfc::rfc793) header length, not including options
+    20;    //!< [TCP](\ref rfc::rfc793) header length, not including options
 
   //! \struct TCPHeader
   //! ~~~{.txt}
@@ -64,6 +64,21 @@ struct TCPHeader {
   std::string summary() const;
 
   bool operator==(const TCPHeader &other) const;
+
+  TCPHeader &set_syn(bool _syn) {
+    syn = _syn;
+    return *this;
+  }
+
+  TCPHeader &set_fin(bool _fin) {
+    fin = _fin;
+    return *this;
+  }
+
+  TCPHeader &set_seqno(WrappingInt32 _seqno) {
+    seqno = _seqno;
+    return *this;
+  }
 };
 
 #endif    // SPONGE_LIBSPONGE_TCP_HEADER_HH
