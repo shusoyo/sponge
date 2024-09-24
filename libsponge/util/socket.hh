@@ -3,6 +3,7 @@
 
 #include "address.hh"
 #include "file_descriptor.hh"
+
 #include <cstdint>
 #include <functional>
 #include <string>
@@ -14,8 +15,9 @@
 class Socket : public FileDescriptor {
 private:
   //! Get the local or peer address the socket is connected to
-  Address get_address(const std::string &name_of_function,
-      const std::function<int(int, sockaddr *, socklen_t *)> &function) const;
+  Address get_address(
+    const std::string &name_of_function,
+    const std::function<int(int, sockaddr *, socklen_t *)> &function) const;
 
 protected:
   //! Construct via [socket(2)](\ref man2::socket)
@@ -25,7 +27,7 @@ protected:
   Socket(FileDescriptor &&fd, const int domain, const int type);
 
   //! Wrapper around [setsockopt(2)](\ref man2::setsockopt)
-  template<typename option_type>
+  template <typename option_type>
   void setsockopt(const int level, const int option, const option_type &option_value);
 
 public:
@@ -61,8 +63,8 @@ public:
 
   //! Returned by UDPSocket::recv; carries received data and information about the sender
   struct received_datagram {
-    Address source_address;    //!< Address from which this datagram was received
-    std::string payload;       //!< UDP datagram payload
+    Address source_address;  //!< Address from which this datagram was received
+    std::string payload;     //!< UDP datagram payload
   };
 
   //! Receive a datagram and the Address of its sender
@@ -114,7 +116,8 @@ public:
 class LocalStreamSocket : public Socket {
 public:
   //! Construct from a file descriptor
-  explicit LocalStreamSocket(FileDescriptor &&fd) : Socket(std::move(fd), AF_UNIX, SOCK_STREAM) {}
+  explicit LocalStreamSocket(FileDescriptor &&fd)
+    : Socket(std::move(fd), AF_UNIX, SOCK_STREAM) {}
 };
 
 //! \class LocalStreamSocket
@@ -122,4 +125,4 @@ public:
 //!
 //! \include socket_example_3.cc
 
-#endif    // SPONGE_LIBSPONGE_SOCKET_HH
+#endif  // SPONGE_LIBSPONGE_SOCKET_HH

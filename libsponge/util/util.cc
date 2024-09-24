@@ -1,4 +1,5 @@
 #include "util.hh"
+
 #include <array>
 #include <cctype>
 #include <chrono>
@@ -14,7 +15,8 @@ uint64_t timestamp_ms() {
   using time_point = std::chrono::steady_clock::time_point;
   static const time_point program_start = std::chrono::steady_clock::now();
   const time_point now = std::chrono::steady_clock::now();
-  return std::chrono::duration_cast<std::chrono::milliseconds>(now - program_start).count();
+  return std::chrono::duration_cast<std::chrono::milliseconds>(now - program_start)
+    .count();
 }
 
 //! \param[in] attempt is the name of the syscall to try (for error reporting)
@@ -64,9 +66,7 @@ int SystemCall(const string &attempt, const int return_value, const int errno_ma
 mt19937 get_random_generator() {
   auto rd = random_device();
   array<uint32_t, mt19937::state_size> seed_data {};
-  generate(seed_data.begin(), seed_data.end(), [&] {
-    return rd();
-  });
+  generate(seed_data.begin(), seed_data.end(), [&] { return rd(); });
   seed_seq seed(seed_data.begin(), seed_data.end());
   return mt19937(seed);
 }
@@ -134,7 +134,7 @@ void hexdump(const uint8_t *data, const size_t len, const size_t indent) {
     pchars << (static_cast<bool>(isprint(data[i])) ? static_cast<char>(data[i]) : '.');
     printed += 1;
   }
-  const int print_rem = (16 - (printed & 0xf)) % 16;    // extra spacing before final chars
+  const int print_rem = (16 - (printed & 0xf)) % 16;  // extra spacing before final chars
   cout << string(2 * print_rem + print_rem / 2 + 4, ' ') << pchars.str();
   cout << '\n' << endl;
   cout.flags(flags);

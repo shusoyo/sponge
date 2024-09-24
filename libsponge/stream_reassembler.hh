@@ -2,6 +2,7 @@
 #define SPONGE_LIBSPONGE_STREAM_REASSEMBLER_HH
 
 #include "byte_stream.hh"
+
 #include <cstddef>
 #include <cstdint>
 #include <string>
@@ -12,8 +13,8 @@ class StreamReassembler {
 private:
   // Your code here -- add private members as necessary.
 
-  ByteStream _output;    //!< The reassembled in-order byte stream
-  size_t _capacity;      //!< The maximum number of bytes
+  ByteStream _output;  //!< The reassembled in-order byte stream
+  size_t _capacity;    //!< The maximum number of bytes
   size_t _byte_pending;
   size_t next_byte;
   std::vector<std::pair<char, bool>> buffer;
@@ -61,4 +62,4 @@ public:
   uint64_t checkpoint() const;
 };
 
-#endif    // SPONGE_LIBSPONGE_STREAM_REASSEMBLER_HH
+#endif  // SPONGE_LIBSPONGE_STREAM_REASSEMBLER_HH

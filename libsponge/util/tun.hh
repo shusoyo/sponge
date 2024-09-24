@@ -2,6 +2,7 @@
 #define SPONGE_LIBSPONGE_TUN_HH
 
 #include "file_descriptor.hh"
+
 #include <string>
 
 //! A FileDescriptor to a [Linux
@@ -31,4 +32,4 @@ public:
   explicit TapFD(const std::string &devname) : TunTapFD(devname, false) {}
 };
 
-#endif    // SPONGE_LIBSPONGE_TUN_HH
+#endif  // SPONGE_LIBSPONGE_TUN_HH

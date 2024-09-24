@@ -1,5 +1,7 @@
 #include "tun.hh"
+
 #include "util.hh"
+
 #include <cstring>
 #include <fcntl.h>
 #include <linux/if.h>
@@ -21,10 +23,11 @@ using namespace std;
 //! as root before calling this function.
 
 TunTapFD::TunTapFD(const string &devname, const bool is_tun)
-    : FileDescriptor(SystemCall("open", open(CLONEDEV, O_RDWR))) {
+  : FileDescriptor(SystemCall("open", open(CLONEDEV, O_RDWR))) {
   struct ifreq tun_req {};
 
-  tun_req.ifr_flags = (is_tun ? IFF_TUN : IFF_TAP) | IFF_NO_PI;    // tun device with no packetinfo
+  tun_req.ifr_flags =
+    (is_tun ? IFF_TUN : IFF_TAP) | IFF_NO_PI;  // tun device with no packetinfo
 
   // copy devname to ifr_name, making sure to null terminate
 

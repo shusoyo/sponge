@@ -2,6 +2,7 @@
 #define SPONGE_LIBSPONGE_FILE_DESCRIPTOR_HH
 
 #include "buffer.hh"
+
 #include <array>
 #include <cstddef>
 #include <limits>
@@ -13,11 +14,11 @@ class FileDescriptor {
   //! \details FileDescriptor objects contain a std::shared_ptr to a FDWrapper.
   class FDWrapper {
   public:
-    int _fd;                      //!< The file descriptor number returned by the kernel
-    bool _eof = false;            //!< Flag indicating whether FDWrapper::_fd is at EOF
-    bool _closed = false;         //!< Flag indicating whether FDWrapper::_fd has been closed
-    unsigned _read_count = 0;     //!< The number of times FDWrapper::_fd has been read
-    unsigned _write_count = 0;    //!< The numberof times FDWrapper::_fd has been written
+    int _fd;                   //!< The file descriptor number returned by the kernel
+    bool _eof = false;         //!< Flag indicating whether FDWrapper::_fd is at EOF
+    bool _closed = false;      //!< Flag indicating whether FDWrapper::_fd has been closed
+    unsigned _read_count = 0;  //!< The number of times FDWrapper::_fd has been read
+    unsigned _write_count = 0;  //!< The numberof times FDWrapper::_fd has been written
 
     //! Construct from a file descriptor number returned by the kernel
     explicit FDWrapper(const int fd);
@@ -40,16 +41,17 @@ class FileDescriptor {
   //! A reference-counted handle to a shared FDWrapper
   std::shared_ptr<FDWrapper> _internal_fd;
 
-  // private constructor used to duplicate the FileDescriptor (increase the reference count)
+  // private constructor used to duplicate the FileDescriptor (increase the reference
+  // count)
   explicit FileDescriptor(std::shared_ptr<FDWrapper> other_shared_ptr);
 
 protected:
   void register_read() {
     ++_internal_fd->_read_count;
-  }    //!< increment read count
+  }  //!< increment read count
   void register_write() {
     ++_internal_fd->_write_count;
-  }    //!< increment write count
+  }  //!< increment write count
 
 public:
   //! Construct from a file descriptor number returned by the kernel
@@ -121,14 +123,15 @@ public:
   //! \name Copy/move constructor/assignment operators
   //! FileDescriptor can be moved, but cannot be copied (but see duplicate())
   //!@{
-  FileDescriptor(
-      const FileDescriptor &other) = delete;    //!< \brief copy construction is forbidden
-  FileDescriptor &operator=(
-      const FileDescriptor &other) = delete;           //!< \brief copy assignment is forbidden
-  FileDescriptor(FileDescriptor &&other) = default;    //!< \brief move construction is allowed
-  FileDescriptor &operator=(
-      FileDescriptor &&other) = default;    //!< \brief move assignment is allowed
-                                            //!@}
+  FileDescriptor(const FileDescriptor &other) =
+    delete;  //!< \brief copy construction is forbidden
+  FileDescriptor &operator=(const FileDescriptor &other) =
+    delete;  //!< \brief copy assignment is forbidden
+  FileDescriptor(FileDescriptor &&other) =
+    default;  //!< \brief move construction is allowed
+  FileDescriptor &operator=(FileDescriptor &&other) =
+    default;  //!< \brief move assignment is allowed
+              //!@}
 };
 
 //! \class FileDescriptor
@@ -137,4 +140,4 @@ public:
 //!
 //! For an example of FileDescriptor use, see the EventLoop class documentation.
 
-#endif    // SPONGE_LIBSPONGE_FILE_DESCRIPTOR_HH
+#endif  // SPONGE_LIBSPONGE_FILE_DESCRIPTOR_HH

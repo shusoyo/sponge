@@ -3,6 +3,7 @@
 
 #include "buffer.hh"
 #include "tcp_header.hh"
+
 #include <cstdint>
 
 //! \brief [TCP](\ref rfc::rfc793) segment
@@ -33,11 +34,13 @@ public:
   Buffer &payload() {
     return _payload;
   }
+
   //!@}
 
   //! \brief Segment's length in sequence space
-  //! \note Equal to payload length plus one byte if SYN is set, plus one byte if FIN is set
+  //! \note Equal to payload length plus one byte if SYN is set, plus one byte
+  //! if FIN is set
   size_t length_in_sequence_space() const;
 };
 
-#endif    // SPONGE_LIBSPONGE_TCP_SEGMENT_HH
+#endif  // SPONGE_LIBSPONGE_TCP_SEGMENT_HH

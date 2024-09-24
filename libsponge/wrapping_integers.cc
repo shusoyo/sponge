@@ -1,4 +1,5 @@
 #include "wrapping_integers.hh"
+
 #include <cstdint>
 #include <limits>
 #include <sys/types.h>
@@ -8,7 +9,7 @@
 // For Lab 2, please replace with a real implementation that passes the
 // automated checks run by `make check_lab2`.
 
-template<typename... Targs>
+template <typename... Targs>
 void DUMMY_CODE(Targs &&.../* unused */) {}
 
 constexpr uint64_t MOD = 1ll << 32;
@@ -16,8 +17,8 @@ constexpr uint64_t MOD = 1ll << 32;
 //! WrappingInt32 \param n The input absolute 64-bit sequence number \param isn
 //! The initial sequence number
 WrappingInt32 wrap(uint64_t n, WrappingInt32 isn) {
-  return WrappingInt32 {
-      static_cast<uint32_t>((static_cast<uint64_t>(isn.raw_value()) + n % MOD) % MOD)};
+  return WrappingInt32 { static_cast<uint32_t>(
+    (static_cast<uint64_t>(isn.raw_value()) + n % MOD) % MOD) };
 }
 
 //! Transform a WrappingInt32 into an "absolute" 64-bit sequence number
@@ -40,7 +41,7 @@ uint64_t unwrap(WrappingInt32 n, WrappingInt32 isn, uint64_t checkpoint) {
       return x;
     } else {
       uint64_t left = x, right = x + MOD;
-      return (checkpoint - left > right - checkpoint ? right : left);
+      return checkpoint - left > right - checkpoint ? right : left;
     }
   }
 }

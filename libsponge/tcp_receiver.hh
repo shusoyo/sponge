@@ -5,6 +5,7 @@
 #include "stream_reassembler.hh"
 #include "tcp_segment.hh"
 #include "wrapping_integers.hh"
+
 #include <cstddef>
 #include <cstdint>
 #include <optional>
@@ -30,7 +31,7 @@ public:
   //! \param capacity the maximum number of bytes that the receiver will
   //!                 store in its buffers at any give time.
   TCPReceiver(const size_t capacity)
-      : _reassembler(capacity), _capacity(capacity), isn({}), is_start() {}
+    : _reassembler(capacity), _capacity(capacity), isn({}), is_start() {}
 
   //! \name Accessors to provide feedback to the remote TCPSender
   //!@{
@@ -74,4 +75,4 @@ public:
   //!@}
 };
 
-#endif    // SPONGE_LIBSPONGE_TCP_RECEIVER_HH
+#endif  // SPONGE_LIBSPONGE_TCP_RECEIVER_HH

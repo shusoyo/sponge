@@ -16,14 +16,15 @@ public:
   //! \details A `sockaddr_storage` is enough space to store any socket address (IPv4 or IPv6).
   class Raw {
   public:
-    sockaddr_storage storage {};    //!< The wrapped struct itself.
+    sockaddr_storage storage {};  //!< The wrapped struct itself.
     operator sockaddr *();
     operator const sockaddr *() const;
   };
 
 private:
-  socklen_t _size;    //!< Size of the wrapped address.
-  Raw _address {};    //!< A wrapped [sockaddr_storage](@ref man7::socket) containing the address.
+  socklen_t _size;  //!< Size of the wrapped address.
+  Raw
+    _address {};  //!< A wrapped [sockaddr_storage](@ref man7::socket) containing the address.
 
   //! Constructor from ip/host, service/port, and hints to the resolver.
   Address(const std::string &node, const std::string &service, const addrinfo &hints);
@@ -92,4 +93,4 @@ public:
 //!
 //! \include address_example_3.cc
 
-#endif    // SPONGE_LIBSPONGE_ADDRESS_HH
+#endif  // SPONGE_LIBSPONGE_ADDRESS_HH

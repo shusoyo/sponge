@@ -11,7 +11,8 @@
 #include <sys/uio.h>
 #include <vector>
 
-//! \brief A reference-counted read-only string that can discard bytes from the front
+//! \brief A reference-counted read-only string that can discard bytes from the
+//! front
 class Buffer {
 private:
   std::shared_ptr<std::string> _storage {};
@@ -21,7 +22,8 @@ public:
   Buffer() = default;
 
   //! \brief Construct by taking ownership of a string
-  Buffer(std::string &&str) noexcept : _storage(std::make_shared<std::string>(std::move(str))) {}
+  Buffer(std::string &&str) noexcept
+    : _storage(std::make_shared<std::string>(std::move(str))) {}
 
   //! \name Expose contents as a std::string_view
   //!@{
@@ -29,7 +31,7 @@ public:
     if (not _storage) {
       return {};
     }
-    return {_storage->data() + _starting_offset, _storage->size() - _starting_offset};
+    return { _storage->data() + _starting_offset, _storage->size() - _starting_offset };
   }
 
   operator std::string_view() const {
@@ -52,14 +54,14 @@ public:
     return std::string(str());
   }
 
-  //! \brief Discard the first `n` bytes of the string (does not require a copy or move)
-  //! \note Doesn't free any memory until the whole string has been discarded in all copies of the
-  //! Buffer.
+  //! \brief Discard the first `n` bytes of the string (does not require a copy
+  //! or move) \note Doesn't free any memory until the whole string has been
+  //! discarded in all copies of the Buffer.
   void remove_prefix(const size_t n);
 };
 
-//! \brief A reference-counted discontiguous string that can discard bytes from the front
-//! \note Used to model packets that contain multiple sets of headers
+//! \brief A reference-counted discontiguous string that can discard bytes from
+//! the front \note Used to model packets that contain multiple sets of headers
 //! + a payload. This allows us to prepend headers (e.g., to
 //! encapsulate a TCP payload in a TCPSegment, and then encapsulate
 //! the TCPSegment in an IPv4Datagram) without copying the payload.
@@ -74,11 +76,11 @@ public:
   BufferList() = default;
 
   //! \brief Construct from a Buffer
-  BufferList(Buffer buffer) : _buffers {buffer} {}
+  BufferList(Buffer buffer) : _buffers { buffer } {}
 
   //! \brief Construct by taking ownership of a std::string
   BufferList(std::string &&str) noexcept {
-    Buffer buf {std::move(str)};
+    Buffer buf { std::move(str) };
     append(buf);
   }
   //!@}
@@ -95,7 +97,8 @@ public:
   //! \note Throws an exception unless BufferList is contiguous
   operator Buffer() const;
 
-  //! \brief Discard the first `n` bytes of the string (does not require a copy or move)
+  //! \brief Discard the first `n` bytes of the string (does not require a copy
+  //! or move)
   void remove_prefix(size_t n);
 
   //! \brief Size of the string
@@ -105,7 +108,8 @@ public:
   std::string concatenate() const;
 };
 
-//! \brief A non-owning temporary view (similar to std::string_view) of a discontiguous string
+//! \brief A non-owning temporary view (similar to std::string_view) of a
+//! discontiguous string
 class BufferViewList {
   std::deque<std::string_view> _views {};
 
@@ -124,11 +128,12 @@ public:
 
   //! \brief Construct from a std::string_view
   BufferViewList(std::string_view str) {
-    _views.push_back({const_cast<char *>(str.data()), str.size()});
+    _views.push_back({ const_cast<char *>(str.data()), str.size() });
   }
   //!@}
 
-  //! \brief Discard the first `n` bytes of the string (does not require a copy or move)
+  //! \brief Discard the first `n` bytes of the string (does not require a copy
+  //! or move)
   void remove_prefix(size_t n);
 
   //! \brief Size of the string
@@ -140,4 +145,4 @@ public:
   std::vector<iovec> as_iovecs() const;
 };
 
-#endif    // SPONGE_LIBSPONGE_BUFFER_HH
+#endif  // SPONGE_LIBSPONGE_BUFFER_HH

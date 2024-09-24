@@ -1,5 +1,7 @@
 #include "file_descriptor.hh"
+
 #include "util.hh"
+
 #include <algorithm>
 #include <fcntl.h>
 #include <iostream>
@@ -38,7 +40,7 @@ FileDescriptor::FileDescriptor(const int fd) : _internal_fd(make_shared<FDWrappe
 
 //! Private constructor used by duplicate()
 FileDescriptor::FileDescriptor(shared_ptr<FDWrapper> other_shared_ptr)
-    : _internal_fd(move(other_shared_ptr)) {}
+  : _internal_fd(move(other_shared_ptr)) {}
 
 //! \returns a copy of this FileDescriptor
 FileDescriptor FileDescriptor::duplicate() const {
@@ -48,7 +50,7 @@ FileDescriptor FileDescriptor::duplicate() const {
 //! \param[in] limit is the maximum number of bytes to read; fewer bytes may be returned
 //! \param[out] str is the string to be read
 void FileDescriptor::read(std::string &str, const size_t limit) {
-  constexpr size_t BUFFER_SIZE = 1024 * 1024;    // maximum size of a read
+  constexpr size_t BUFFER_SIZE = 1024 * 1024;  // maximum size of a read
   const size_t size_to_read = min(BUFFER_SIZE, limit);
   str.resize(size_to_read);
 
@@ -81,7 +83,7 @@ size_t FileDescriptor::write(BufferViewList buffer, const bool write_all) {
     auto iovecs = buffer.as_iovecs();
 
     const ssize_t bytes_written =
-        SystemCall("writev", ::writev(fd_num(), iovecs.data(), iovecs.size()));
+      SystemCall("writev", ::writev(fd_num(), iovecs.data(), iovecs.size()));
     if (bytes_written == 0 and buffer.size() != 0) {
       throw runtime_error("write returned 0 given non-empty input buffer");
     }

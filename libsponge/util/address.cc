@@ -1,5 +1,7 @@
 #include "address.hh"
+
 #include "util.hh"
+
 #include <arpa/inet.h>
 #include <array>
 #include <cstring>
@@ -49,14 +51,18 @@ public:
 //! \param[in] node is the hostname or dotted-quad address
 //! \param[in] service is the service name or numeric string
 //! \param[in] hints are criteria for resolving the supplied name
-Address::Address(const string &node, const string &service, const addrinfo &hints) : _size() {
+Address::Address(const string &node, const string &service, const addrinfo &hints)
+  : _size() {
   // prepare for the answer
   addrinfo *resolved_address = nullptr;
 
   // look up the name or names
-  const int gai_ret = getaddrinfo(node.c_str(), service.c_str(), &hints, &resolved_address);
+  const int gai_ret =
+    getaddrinfo(node.c_str(), service.c_str(), &hints, &resolved_address);
   if (gai_ret != 0) {
-    throw tagged_error(gai_error_category(), "getaddrinfo(" + node + ", " + service + ")", gai_ret);
+    throw tagged_error(gai_error_category(),
+                       "getaddrinfo(" + node + ", " + service + ")",
+                       gai_ret);
   }
 
   // if success, should always have at least one entry
@@ -64,12 +70,12 @@ Address::Address(const string &node, const string &service, const addrinfo &hint
     throw runtime_error("getaddrinfo returned successfully but with no results");
   }
 
-  // put resolved_address in a wrapper so it will get freed if we have to throw an exception
-  auto addrinfo_deleter = [](addrinfo *const x) {
-    freeaddrinfo(x);
-  };
-  unique_ptr<addrinfo, decltype(addrinfo_deleter)> wrapped_address(resolved_address,
-      std::move(addrinfo_deleter));
+  // put resolved_address in a wrapper so it will get freed if we have to throw an
+  // exception
+  auto addrinfo_deleter = [](addrinfo *const x) { freeaddrinfo(x); };
+  unique_ptr<addrinfo, decltype(addrinfo_deleter)> wrapped_address(
+    resolved_address,
+    std::move(addrinfo_deleter));
 
   // assign to our private members (making sure size fits)
   *this = Address(wrapped_address->ai_addr, wrapped_address->ai_addrlen);
@@ -80,7 +86,7 @@ Address::Address(const string &node, const string &service, const addrinfo &hint
 //! man3::getaddrinfo) \param[in] ai_family is the value of the `ai_family` field in the [struct
 //! addrinfo](\ref man3::getaddrinfo)
 static inline addrinfo make_hints(const int ai_flags, const int ai_family) {
-  addrinfo hints {};    // value initialized to all zeros
+  addrinfo hints {};  // value initialized to all zeros
   hints.ai_flags = ai_flags;
   hints.ai_family = ai_family;
   return hints;
@@ -89,26 +95,32 @@ static inline addrinfo make_hints(const int ai_flags, const int ai_family) {
 //! \param[in] hostname to resolve
 //! \param[in] service name (from `/etc/services`, e.g., "http" is port 80)
 Address::Address(const string &hostname, const string &service)
-    : Address(hostname, service, make_hints(AI_ALL, AF_INET)) {}
+  : Address(hostname, service, make_hints(AI_ALL, AF_INET)) {}
 
 //! \param[in] ip address as a dotted quad ("1.1.1.1")
 //! \param[in] port number
 Address::Address(const string &ip, const uint16_t port)
-    // tell getaddrinfo that we don't want to resolve anything
-    : Address(ip, ::to_string(port), make_hints(AI_NUMERICHOST | AI_NUMERICSERV, AF_INET)) {}
+  // tell getaddrinfo that we don't want to resolve anything
+  : Address(ip, ::to_string(port), make_hints(AI_NUMERICHOST | AI_NUMERICSERV, AF_INET)) {
+}
 
 // accessors
 pair<string, uint16_t> Address::ip_port() const {
   array<char, NI_MAXHOST> ip {};
   array<char, NI_MAXSERV> port {};
 
-  const int gni_ret = getnameinfo(_address, _size, ip.data(), ip.size(), port.data(), port.size(),
-      NI_NUMERICHOST | NI_NUMERICSERV);
+  const int gni_ret = getnameinfo(_address,
+                                  _size,
+                                  ip.data(),
+                                  ip.size(),
+                                  port.data(),
+                                  port.size(),
+                                  NI_NUMERICHOST | NI_NUMERICSERV);
   if (gni_ret != 0) {
     throw tagged_error(gai_error_category(), "getnameinfo", gni_ret);
   }
 
-  return {ip.data(), stoi(port.data())};
+  return { ip.data(), stoi(port.data()) };
 }
 
 string Address::to_string() const {
@@ -132,7 +144,7 @@ Address Address::from_ipv4_numeric(const uint32_t ip_address) {
   ipv4_addr.sin_family = AF_INET;
   ipv4_addr.sin_addr.s_addr = htobe32(ip_address);
 
-  return {reinterpret_cast<sockaddr *>(&ipv4_addr), sizeof(ipv4_addr)};
+  return { reinterpret_cast<sockaddr *>(&ipv4_addr), sizeof(ipv4_addr) };
 }
 
 // equality

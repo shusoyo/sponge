@@ -25,8 +25,8 @@ BufferList::operator Buffer() const {
     case 1:
       return _buffers[0];
     default: {
-      throw runtime_error(
-          "BufferList: please use concatenate() to combine a multi-Buffer BufferList into one Buffer");
+      throw runtime_error("BufferList: please use concatenate() to combine a "
+                          "multi-Buffer BufferList into one Buffer");
     }
   }
 }
@@ -98,7 +98,7 @@ vector<iovec> BufferViewList::as_iovecs() const {
   vector<iovec> ret;
   ret.reserve(_views.size());
   for (const auto &x : _views) {
-    ret.push_back({const_cast<char *>(x.data()), x.size()});
+    ret.push_back({ const_cast<char *>(x.data()), x.size() });
   }
   return ret;
 }

@@ -1,20 +1,23 @@
 #include "tcp_segment.hh"
+
 #include "parser.hh"
 #include "util.hh"
+
 #include <variant>
 
 using namespace std;
 
 //! \param[in] buffer string/Buffer to be parsed
 //! \param[in] datagram_layer_checksum pseudo-checksum from the lower-layer protocol
-ParseResult TCPSegment::parse(const Buffer buffer, const uint32_t datagram_layer_checksum) {
+ParseResult TCPSegment::parse(const Buffer buffer,
+                              const uint32_t datagram_layer_checksum) {
   InternetChecksum check(datagram_layer_checksum);
   check.add(buffer);
   if (check.value()) {
     return ParseResult::BadChecksum;
   }
 
-  NetParser p {buffer};
+  NetParser p { buffer };
   _header.parse(p);
   _payload = p.buffer();
   return p.get_error();

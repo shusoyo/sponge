@@ -8,7 +8,7 @@
 //! \note This is used to express TCP sequence numbers (seqno) and acknowledgment numbers (ackno)
 class WrappingInt32 {
 private:
-  uint32_t _raw_value;    //!< The raw 32-bit stored integer
+  uint32_t _raw_value;  //!< The raw 32-bit stored integer
 
 public:
   //! Construct from a raw 32-bit unsigned integer
@@ -16,7 +16,7 @@ public:
 
   uint32_t raw_value() const {
     return _raw_value;
-  }    //!< Access raw stored value
+  }  //!< Access raw stored value
 };
 
 //! Transform a 64-bit absolute sequence number (zero-indexed) into a 32-bit relative sequence
@@ -65,7 +65,7 @@ inline std::ostream &operator<<(std::ostream &os, WrappingInt32 a) {
 
 //! \brief The point `b` steps past `a`.
 inline WrappingInt32 operator+(WrappingInt32 a, uint32_t b) {
-  return WrappingInt32 {a.raw_value() + b};
+  return WrappingInt32 { a.raw_value() + b };
 }
 
 //! \brief The point `b` steps before `a`.
@@ -74,4 +74,4 @@ inline WrappingInt32 operator-(WrappingInt32 a, uint32_t b) {
 }
 //!@}
 
-#endif    // SPONGE_LIBSPONGE_WRAPPING_INTEGERS_HH
+#endif  // SPONGE_LIBSPONGE_WRAPPING_INTEGERS_HH

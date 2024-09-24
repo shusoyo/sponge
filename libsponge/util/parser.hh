@@ -2,6 +2,7 @@
 #define SPONGE_LIBSPONGE_PARSER_HH
 
 #include "buffer.hh"
+
 #include <cstdint>
 #include <cstdlib>
 #include <string>
@@ -9,13 +10,13 @@
 
 //! The result of parsing or unparsing an IP datagram, TCP segment, Ethernet frame, or ARP message
 enum class ParseResult {
-  NoError = 0,        //!< Success
-  BadChecksum,        //!< Bad checksum
-  PacketTooShort,     //!< Not enough data to finish parsing
-  WrongIPVersion,     //!< Got a version of IP other than 4
-  HeaderTooShort,     //!< Header length is shorter than minimum required
-  TruncatedPacket,    //!< Packet length is shorter than header claims
-  Unsupported         //!< Packet uses unsupported features
+  NoError = 0,      //!< Success
+  BadChecksum,      //!< Bad checksum
+  PacketTooShort,   //!< Not enough data to finish parsing
+  WrongIPVersion,   //!< Got a version of IP other than 4
+  HeaderTooShort,   //!< Header length is shorter than minimum required
+  TruncatedPacket,  //!< Packet length is shorter than header claims
+  Unsupported       //!< Packet uses unsupported features
 };
 
 //! Output a string representation of a ParseResult
@@ -24,13 +25,13 @@ std::string as_string(const ParseResult r);
 class NetParser {
 private:
   Buffer _buffer;
-  ParseResult _error = ParseResult::NoError;    //!< Result of parsing so far
+  ParseResult _error = ParseResult::NoError;  //!< Result of parsing so far
 
   //! Check that there is sufficient data to parse the next token
   void _check_size(const size_t size);
 
   //! Generic integer parsing method (used by u32, u16, u8)
-  template<typename T>
+  template <typename T>
   T _parse_int();
 
 public:
@@ -70,7 +71,7 @@ public:
 };
 
 struct NetUnparser {
-  template<typename T>
+  template <typename T>
   static void _unparse_int(std::string &s, T val);
 
   //! Write a 32-bit integer into the data stream in network byte order
@@ -83,4 +84,4 @@ struct NetUnparser {
   static void u8(std::string &s, const uint8_t val);
 };
 
-#endif    // SPONGE_LIBSPONGE_PARSER_HH
+#endif  // SPONGE_LIBSPONGE_PARSER_HH

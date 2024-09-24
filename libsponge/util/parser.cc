@@ -6,12 +6,8 @@ using namespace std;
 //! \returns a string representation of the ParseResult
 string as_string(const ParseResult r) {
   static constexpr const char *_names[] = {
-      "NoError",
-      "BadChecksum",
-      "PacketTooShort",
-      "WrongIPVersion",
-      "HeaderTooShort",
-      "TruncatedPacket",
+    "NoError",        "BadChecksum",    "PacketTooShort",
+    "WrongIPVersion", "HeaderTooShort", "TruncatedPacket",
   };
 
   return _names[static_cast<size_t>(r)];
@@ -23,7 +19,7 @@ void NetParser::_check_size(const size_t size) {
   }
 }
 
-template<typename T>
+template <typename T>
 T NetParser::_parse_int() {
   constexpr size_t len = sizeof(T);
   _check_size(len);
@@ -50,7 +46,7 @@ void NetParser::remove_prefix(const size_t n) {
   _buffer.remove_prefix(n);
 }
 
-template<typename T>
+template <typename T>
 void NetUnparser::_unparse_int(string &s, T val) {
   constexpr size_t len = sizeof(T);
   for (size_t i = 0; i < len; ++i) {

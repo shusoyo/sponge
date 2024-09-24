@@ -8,7 +8,7 @@
 //! \note TCP options are not supported
 struct TCPHeader {
   static constexpr size_t LENGTH =
-    20;    //!< [TCP](\ref rfc::rfc793) header length, not including options
+    20;  //!< [TCP](\ref rfc::rfc793) header length, not including options
 
   //! \struct TCPHeader
   //! ~~~{.txt}
@@ -35,20 +35,20 @@ struct TCPHeader {
 
   //! \name TCP Header fields
   //!@{
-  uint16_t sport = 0;           //!< source port
-  uint16_t dport = 0;           //!< destination port
-  WrappingInt32 seqno {0};      //!< sequence number
-  WrappingInt32 ackno {0};      //!< ack number
-  uint8_t doff = LENGTH / 4;    //!< data offset
-  bool urg = false;             //!< urgent flag
-  bool ack = false;             //!< ack flag
-  bool psh = false;             //!< push flag
-  bool rst = false;             //!< rst flag
-  bool syn = false;             //!< syn flag
-  bool fin = false;             //!< fin flag
-  uint16_t win = 0;             //!< window size
-  uint16_t cksum = 0;           //!< checksum
-  uint16_t uptr = 0;            //!< urgent pointer
+  uint16_t sport = 0;         //!< source port
+  uint16_t dport = 0;         //!< destination port
+  WrappingInt32 seqno { 0 };  //!< sequence number
+  WrappingInt32 ackno { 0 };  //!< ack number
+  uint8_t doff = LENGTH / 4;  //!< data offset
+  bool urg = false;           //!< urgent flag
+  bool ack = false;           //!< ack flag
+  bool psh = false;           //!< push flag
+  bool rst = false;           //!< rst flag
+  bool syn = false;           //!< syn flag
+  bool fin = false;           //!< fin flag
+  uint16_t win = 0;           //!< window size
+  uint16_t cksum = 0;         //!< checksum
+  uint16_t uptr = 0;          //!< urgent pointer
   //!@}
 
   //! Parse the TCP fields from the provided NetParser
@@ -81,4 +81,4 @@ struct TCPHeader {
   }
 };
 
-#endif    // SPONGE_LIBSPONGE_TCP_HEADER_HH
+#endif  // SPONGE_LIBSPONGE_TCP_HEADER_HH

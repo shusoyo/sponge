@@ -1,5 +1,7 @@
 #include "socket.hh"
+
 #include "util.hh"
+
 #include <cstddef>
 #include <stdexcept>
 #include <unistd.h>
@@ -10,26 +12,29 @@ using namespace std;
 //! \param[in] domain is as described in [socket(7)](\ref man7::socket), probably `AF_INET` or
 //! `AF_UNIX` \param[in] type is as described in [socket(7)](\ref man7::socket)
 Socket::Socket(const int domain, const int type)
-    : FileDescriptor(SystemCall("socket", socket(domain, type, 0))) {}
+  : FileDescriptor(SystemCall("socket", socket(domain, type, 0))) {}
 
 // construct from file descriptor
 //! \param[in] fd is the FileDescriptor from which to construct
 //! \param[in] domain is `fd`'s domain; throws std::runtime_error if wrong value is supplied
 //! \param[in] type is `fd`'s type; throws std::runtime_error if wrong value is supplied
-Socket::Socket(FileDescriptor &&fd, const int domain, const int type) : FileDescriptor(move(fd)) {
+Socket::Socket(FileDescriptor &&fd, const int domain, const int type)
+  : FileDescriptor(move(fd)) {
   int actual_value;
   socklen_t len;
 
   // verify domain
   len = sizeof(actual_value);
-  SystemCall("getsockopt", getsockopt(fd_num(), SOL_SOCKET, SO_DOMAIN, &actual_value, &len));
+  SystemCall("getsockopt",
+             getsockopt(fd_num(), SOL_SOCKET, SO_DOMAIN, &actual_value, &len));
   if ((len != sizeof(actual_value)) or (actual_value != domain)) {
     throw runtime_error("socket domain mismatch");
   }
 
   // verify type
   len = sizeof(actual_value);
-  SystemCall("getsockopt", getsockopt(fd_num(), SOL_SOCKET, SO_TYPE, &actual_value, &len));
+  SystemCall("getsockopt",
+             getsockopt(fd_num(), SOL_SOCKET, SO_TYPE, &actual_value, &len));
   if ((len != sizeof(actual_value)) or (actual_value != type)) {
     throw runtime_error("socket type mismatch");
   }
@@ -39,14 +44,15 @@ Socket::Socket(FileDescriptor &&fd, const int domain, const int type) : FileDesc
 //! \param[in] name_of_function is the function to call (string passed to SystemCall())
 //! \param[in] function is a pointer to the function
 //! \returns the requested Address
-Address Socket::get_address(const string &name_of_function,
-    const function<int(int, sockaddr *, socklen_t *)> &function) const {
+Address Socket::get_address(
+  const string &name_of_function,
+  const function<int(int, sockaddr *, socklen_t *)> &function) const {
   Address::Raw address;
   socklen_t size = sizeof(address);
 
   SystemCall(name_of_function, function(fd_num(), address, &size));
 
-  return {address, size};
+  return { address, size };
 }
 
 //! \returns the local Address of the socket
@@ -101,27 +107,33 @@ void UDPSocket::recv(received_datagram &datagram, const size_t mtu) {
 
   socklen_t fromlen = sizeof(datagram_source_address);
 
-  const ssize_t recv_len =
-      SystemCall("recvfrom", ::recvfrom(fd_num(), datagram.payload.data(), datagram.payload.size(),
-                                 MSG_TRUNC, datagram_source_address, &fromlen));
+  const ssize_t recv_len = SystemCall("recvfrom",
+                                      ::recvfrom(fd_num(),
+                                                 datagram.payload.data(),
+                                                 datagram.payload.size(),
+                                                 MSG_TRUNC,
+                                                 datagram_source_address,
+                                                 &fromlen));
 
   if (recv_len > ssize_t(mtu)) {
     throw runtime_error("recvfrom (oversized datagram)");
   }
 
   register_read();
-  datagram.source_address = {datagram_source_address, fromlen};
+  datagram.source_address = { datagram_source_address, fromlen };
   datagram.payload.resize(recv_len);
 }
 
 UDPSocket::received_datagram UDPSocket::recv(const size_t mtu) {
-  received_datagram ret {{nullptr, 0}, ""};
+  received_datagram ret { { nullptr, 0 }, "" };
   recv(ret, mtu);
   return ret;
 }
 
-void sendmsg_helper(const int fd_num, const sockaddr *destination_address,
-    const socklen_t destination_address_len, const BufferViewList &payload) {
+void sendmsg_helper(const int fd_num,
+                    const sockaddr *destination_address,
+                    const socklen_t destination_address_len,
+                    const BufferViewList &payload) {
   auto iovecs = payload.as_iovecs();
 
   msghdr message {};
@@ -159,7 +171,8 @@ void TCPSocket::listen(const int backlog) {
 //! \note This function blocks until a new connection is available
 TCPSocket TCPSocket::accept() {
   register_read();
-  return TCPSocket(FileDescriptor(SystemCall("accept", ::accept(fd_num(), nullptr, nullptr))));
+  return TCPSocket(
+    FileDescriptor(SystemCall("accept", ::accept(fd_num(), nullptr, nullptr))));
 }
 
 // set socket option
@@ -167,10 +180,12 @@ TCPSocket TCPSocket::accept() {
 //! \param[in] option A single option to set
 //! \param[in] option_value The value to set
 //! \details See [setsockopt(2)](\ref man2::setsockopt) for details.
-template<typename option_type>
-void Socket::setsockopt(const int level, const int option, const option_type &option_value) {
+template <typename option_type>
+void Socket::setsockopt(const int level,
+                        const int option,
+                        const option_type &option_value) {
   SystemCall("setsockopt",
-      ::setsockopt(fd_num(), level, option, &option_value, sizeof(option_value)));
+             ::setsockopt(fd_num(), level, option, &option_value, sizeof(option_value)));
 }
 
 // allow local address to be reused sooner, at the cost of some robustness

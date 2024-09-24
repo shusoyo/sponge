@@ -1,4 +1,5 @@
 #include "stream_reassembler.hh"
+
 #include <cstddef>
 #include <cstdint>
 
@@ -7,24 +8,32 @@
 // For Lab 1, please replace with a real implementation that passes the
 // automated checks run by `make check_lab1`.
 
-// You will need to add private members to the class declaration in `stream_reassembler.hh`
+// You will need to add private members to the class declaration in
+// `stream_reassembler.hh`
 
 StreamReassembler::StreamReassembler(const size_t capacity)
-    : _output(capacity), _capacity(capacity), _byte_pending(), next_byte(), buffer(), end_index(),
-      is_get_end() {}
+  : _output(capacity)
+  , _capacity(capacity)
+  , _byte_pending()
+  , next_byte()
+  , buffer()
+  , end_index()
+  , is_get_end() {}
 
 //! \details This function accepts a substring (aka a segment) of bytes,
 //! possibly out-of-order, from the logical stream, and assembles any newly
 //! contiguous substrings and writes them into the output stream in order.
-void StreamReassembler::push_substring(const std::string &data, const size_t index,
-    const bool eof) {
+void StreamReassembler::push_substring(const std::string &data,
+                                       const size_t index,
+                                       const bool eof) {
   using i64 = long long;
   i64 difference = next_byte - index;
 
   if (difference == 0 or (difference > 0 and difference < i64(data.size()))) {
     std::string_view view(data);
-    view = view.substr(difference,
-        std::min(_output.remaining_capacity(), data.size() - size_t(difference)));
+    view = view.substr(
+      difference,
+      std::min(_output.remaining_capacity(), data.size() - size_t(difference)));
 
     for (size_t i = 0; i < view.size() && next_byte + i < buffer.size(); i++) {
       if (buffer[next_byte + i].second) {
@@ -32,7 +41,7 @@ void StreamReassembler::push_substring(const std::string &data, const size_t ind
       }
     }
 
-    std::string will_write {view};
+    std::string will_write { view };
     next_byte += view.size();
 
     for (size_t i = next_byte; i < buffer.size(); i++) {
@@ -54,7 +63,8 @@ void StreamReassembler::push_substring(const std::string &data, const size_t ind
       buffer.resize(index + data.size() + 1);
     }
 
-    size_t length = std::min(data.size(), _output.remaining_capacity() + next_byte - index);
+    size_t length =
+      std::min(data.size(), _output.remaining_capacity() + next_byte - index);
 
     for (size_t i = 0; i < length; i++) {
       auto &[value, state] = buffer[i + index];

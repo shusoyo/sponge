@@ -24,7 +24,7 @@ private:
   size_t byte_pushed_;
   size_t byte_popped_;
   bool end_input_ {};
-  bool _error {};    //!< Flag indicating that the stream suffered an error.
+  bool _error {};  //!< Flag indicating that the stream suffered an error.
 
 public:
   //! Construct a stream with room for `capacity` bytes.
@@ -93,4 +93,4 @@ public:
   //!@}
 };
 
-#endif    // SPONGE_LIBSPONGE_BYTE_STREAM_HH
+#endif  // SPONGE_LIBSPONGE_BYTE_STREAM_HH

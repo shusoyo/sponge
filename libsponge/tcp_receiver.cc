@@ -1,5 +1,7 @@
 #include "tcp_receiver.hh"
+
 #include "wrapping_integers.hh"
+
 #include <cstdint>
 #include <optional>
 
@@ -15,14 +17,14 @@ void TCPReceiver::segment_received(const TCPSegment &seg) {
   }
 
   uint64_t index =
-      unwrap(seg.header().seqno + seg.header().syn, isn, _reassembler.checkpoint()) - 1;
+    unwrap(seg.header().seqno + seg.header().syn, isn, _reassembler.checkpoint()) - 1;
   _reassembler.push_substring(seg.payload().copy(), index, seg.header().fin);
 }
 
 std::optional<WrappingInt32> TCPReceiver::ackno() const {
   if (is_start) {
-    return {
-        wrap(_reassembler.checkpoint(), isn) + is_start + _reassembler.stream_out().input_ended()};
+    return { wrap(_reassembler.checkpoint(), isn) + is_start +
+             _reassembler.stream_out().input_ended() };
   } else {
     return std::nullopt;
   }
