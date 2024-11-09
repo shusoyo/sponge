@@ -15,7 +15,8 @@ uint64_t timestamp_ms() {
   using time_point = std::chrono::steady_clock::time_point;
   static const time_point program_start = std::chrono::steady_clock::now();
   const time_point now = std::chrono::steady_clock::now();
-  return std::chrono::duration_cast<std::chrono::milliseconds>(now - program_start)
+  return std::chrono::duration_cast<std::chrono::milliseconds>(now -
+                                                               program_start)
     .count();
 }
 
@@ -41,7 +42,9 @@ uint64_t timestamp_ms() {
 //!     std::cerr << "Access to /tmp/foo was denied." << std::endl;
 //! }
 //! ~~~
-int SystemCall(const char *attempt, const int return_value, const int errno_mask) {
+int SystemCall(const char *attempt,
+               const int return_value,
+               const int errno_mask) {
   if (return_value >= 0 || errno == errno_mask) {
     return return_value;
   }
@@ -53,7 +56,9 @@ int SystemCall(const char *attempt, const int return_value, const int errno_mask
 //! \param[in] return_value is the return value of the syscall
 //! \param[in] errno_mask is any errno value that is acceptable, e.g., `EAGAIN` when reading a
 //! non-blocking fd \details see the other SystemCall() documentation for more details
-int SystemCall(const string &attempt, const int return_value, const int errno_mask) {
+int SystemCall(const string &attempt,
+               const int return_value,
+               const int errno_mask) {
   return SystemCall(attempt.c_str(), return_value, errno_mask);
 }
 
@@ -88,7 +93,8 @@ mt19937 get_random_generator() {
 //! For more information, see the [Wikipedia
 //! page](https://en.wikipedia.org/wiki/IPv4_header_checksum) on the Internet checksum, and consult
 //! the [IP](\ref rfc::rfc791) and [TCP](\ref rfc::rfc793) RFCs.
-InternetChecksum::InternetChecksum(const uint32_t initial_sum) : _sum(initial_sum) {}
+InternetChecksum::InternetChecksum(const uint32_t initial_sum)
+  : _sum(initial_sum) {}
 
 void InternetChecksum::add(std::string_view data) {
   for (size_t i = 0; i < data.size(); i++) {
@@ -131,10 +137,12 @@ void hexdump(const uint8_t *data, const size_t len, const size_t indent) {
       cout << ' ';
     }
     cout << setw(2) << +data[i];
-    pchars << (static_cast<bool>(isprint(data[i])) ? static_cast<char>(data[i]) : '.');
+    pchars << (static_cast<bool>(isprint(data[i])) ? static_cast<char>(data[i])
+                                                   : '.');
     printed += 1;
   }
-  const int print_rem = (16 - (printed & 0xf)) % 16;  // extra spacing before final chars
+  const int print_rem =
+    (16 - (printed & 0xf)) % 16;  // extra spacing before final chars
   cout << string(2 * print_rem + print_rem / 2 + 4, ' ') << pchars.str();
   cout << '\n' << endl;
   cout.flags(flags);

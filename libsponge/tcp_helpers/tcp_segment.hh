@@ -14,7 +14,8 @@ private:
 
 public:
   //! \brief Parse the segment from a string
-  ParseResult parse(const Buffer buffer, const uint32_t datagram_layer_checksum = 0);
+  ParseResult parse(const Buffer buffer,
+                    const uint32_t datagram_layer_checksum = 0);
 
   //! \brief Serialize the segment to a string
   BufferList serialize(const uint32_t datagram_layer_checksum = 0) const;

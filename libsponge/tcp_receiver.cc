@@ -16,8 +16,10 @@ void TCPReceiver::segment_received(const TCPSegment &seg) {
     is_start = true;
   }
 
-  uint64_t index =
-    unwrap(seg.header().seqno + seg.header().syn, isn, reassembler_.checkpoint()) - 1;
+  uint64_t index = unwrap(seg.header().seqno + seg.header().syn,
+                          isn,
+                          reassembler_.checkpoint()) -
+                   1;
   reassembler_.push_substring(seg.payload().copy(), index, seg.header().fin);
 }
 

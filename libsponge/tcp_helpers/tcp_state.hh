@@ -51,7 +51,10 @@ public:
   std::string name() const;
 
   //! \brief Construct a TCPState given a sender, a receiver, and the TCPConnection's active and linger bits
-  TCPState(const TCPSender &sender, const TCPReceiver &receiver, const bool active, const bool linger);
+  TCPState(const TCPSender &sender,
+           const TCPReceiver &receiver,
+           const bool active,
+           const bool linger);
 
   //! \brief Construct a TCPState that corresponds to one of the "official" TCP state names
   TCPState(const TCPState::State state);
@@ -66,7 +69,8 @@ public:
 namespace TCPReceiverStateSummary {
 const std::string ERROR = "error (connection was reset)";
 const std::string LISTEN = "waiting for SYN: ackno is empty";
-const std::string SYN_RECV = "SYN received (ackno exists), and input to stream hasn't ended";
+const std::string SYN_RECV =
+  "SYN received (ackno exists), and input to stream hasn't ended";
 const std::string FIN_RECV = "input to stream has ended";
 }  // namespace TCPReceiverStateSummary
 
@@ -75,7 +79,8 @@ const std::string ERROR = "error (connection was reset)";
 const std::string CLOSED = "waiting for stream to begin (no SYN sent)";
 const std::string SYN_SENT = "stream started but nothing acknowledged";
 const std::string SYN_ACKED = "stream ongoing";
-const std::string FIN_SENT = "stream finished (FIN sent) but not fully acknowledged";
+const std::string FIN_SENT =
+  "stream finished (FIN sent) but not fully acknowledged";
 const std::string FIN_ACKED = "stream finished and fully acknowledged";
 }  // namespace TCPSenderStateSummary
 

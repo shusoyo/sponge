@@ -51,7 +51,9 @@ public:
 //! \param[in] node is the hostname or dotted-quad address
 //! \param[in] service is the service name or numeric string
 //! \param[in] hints are criteria for resolving the supplied name
-Address::Address(const string &node, const string &service, const addrinfo &hints)
+Address::Address(const string &node,
+                 const string &service,
+                 const addrinfo &hints)
   : _size() {
   // prepare for the answer
   addrinfo *resolved_address = nullptr;
@@ -67,11 +69,12 @@ Address::Address(const string &node, const string &service, const addrinfo &hint
 
   // if success, should always have at least one entry
   if (resolved_address == nullptr) {
-    throw runtime_error("getaddrinfo returned successfully but with no results");
+    throw runtime_error(
+      "getaddrinfo returned successfully but with no results");
   }
 
-  // put resolved_address in a wrapper so it will get freed if we have to throw an
-  // exception
+  // put resolved_address in a wrapper so it will get freed if we have to throw
+  // an exception
   auto addrinfo_deleter = [](addrinfo *const x) { freeaddrinfo(x); };
   unique_ptr<addrinfo, decltype(addrinfo_deleter)> wrapped_address(
     resolved_address,
@@ -101,8 +104,9 @@ Address::Address(const string &hostname, const string &service)
 //! \param[in] port number
 Address::Address(const string &ip, const uint16_t port)
   // tell getaddrinfo that we don't want to resolve anything
-  : Address(ip, ::to_string(port), make_hints(AI_NUMERICHOST | AI_NUMERICSERV, AF_INET)) {
-}
+  : Address(ip,
+            ::to_string(port),
+            make_hints(AI_NUMERICHOST | AI_NUMERICSERV, AF_INET)) {}
 
 // accessors
 pair<string, uint16_t> Address::ip_port() const {

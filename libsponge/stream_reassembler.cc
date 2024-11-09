@@ -40,7 +40,8 @@ void StreamReassembler::push_substring(const string &data,
       difference,
       std::min(output_.remaining_capacity(), data.size() - size_t(difference)));
 
-    for (size_t i = 0; i < view.size() && next_byte_ + i < buffer_.size(); i++) {
+    for (size_t i = 0; i < view.size() && next_byte_ + i < buffer_.size();
+         i++) {
       if (buffer_[next_byte_ + i].has_value()) {
         byte_pending_ -= 1;
       }

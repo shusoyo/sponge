@@ -33,7 +33,7 @@ private:
 
   std::queue<OutstandingSeg> outstandings_ {};
 
-  std::queue<TCPSegment> &segments_out_;
+  std::queue<TCPSegment> segments_out_ {};
 
   bool finished_ {};
 

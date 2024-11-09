@@ -49,9 +49,9 @@ void TCPSender::fill_window() {
   } else {
     uint64_t remain_window_size = _window_size == 0 ? 1 : _window_size;
 
-    while (
-      ((not _fin_seq.has_value() and _stream.eof()) or not _stream.buffer_empty()) and
-      remain_window_size > bytes_in_flight()) {
+    while (((not _fin_seq.has_value() and _stream.eof()) or
+            not _stream.buffer_empty()) and
+           remain_window_size > bytes_in_flight()) {
       size_t length = std::min({ TCPConfig::MAX_PAYLOAD_SIZE,
                                  _stream.buffer_size(),
                                  remain_window_size - bytes_in_flight() });
@@ -75,7 +75,8 @@ void TCPSender::fill_window() {
 
 //! \param ackno The remote receiver's ackno (acknowledgment number)
 //! \param window_size The remote receiver's advertised window size
-void TCPSender::ack_received(const WrappingInt32 ackno, const uint16_t window_size) {
+void TCPSender::ack_received(const WrappingInt32 ackno,
+                             const uint16_t window_size) {
   uint64_t this_ack_no = unwrap(ackno, _isn, _ack_no);
 
   if (this_ack_no < _ack_no or this_ack_no > _next_seqno or
@@ -110,7 +111,8 @@ void TCPSender::send_empty_segment() {
   _segments_out.push(seg);
 }
 
-Retransmission::Retransmission(std::queue<TCPSegment> &out) : segments_out_(out) {}
+Retransmission::Retransmission(std::queue<TCPSegment> &out)
+  : segments_out_(out) {}
 
 void Retransmission::check(const size_t duration, const uint64_t window_size) {
   if (not timer_state_) {
@@ -130,7 +132,8 @@ void Retransmission::check(const size_t duration, const uint64_t window_size) {
 }
 
 void Retransmission::sweep(const uint64_t ack_no) {
-  while (not outstandings_.empty() and outstandings_.front().end_seq <= ack_no) {
+  while (not outstandings_.empty() and
+         outstandings_.front().end_seq <= ack_no) {
     const auto &seg = outstandings_.front().seg;
     bytes_in_flight_ -= seg.length_in_sequence_space();
 

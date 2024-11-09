@@ -34,5 +34,6 @@ TunTapFD::TunTapFD(const string &devname, const bool is_tun)
   strncpy(static_cast<char *>(tun_req.ifr_name), devname.data(), IFNAMSIZ - 1);
   tun_req.ifr_name[IFNAMSIZ - 1] = '\0';
 
-  SystemCall("ioctl", ioctl(fd_num(), TUNSETIFF, static_cast<void *>(&tun_req)));
+  SystemCall("ioctl",
+             ioctl(fd_num(), TUNSETIFF, static_cast<void *>(&tun_req)));
 }

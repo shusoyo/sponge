@@ -68,7 +68,8 @@ EventLoop::Result EventLoop::wait_next_event(const int timeout_ms) {
 
   // set up the pollfd for each rule
   for (auto it = _rules.cbegin();
-       it != _rules.cend();) {  // NOTE: it gets erased or incremented in loop body
+       it !=
+       _rules.cend();) {  // NOTE: it gets erased or incremented in loop body
     const auto &this_rule = *it;
     if (this_rule.direction == Direction::In && this_rule.fd.eof()) {
       // no more reading on this rule, it's reached eof
@@ -88,8 +89,9 @@ EventLoop::Result EventLoop::wait_next_event(const int timeout_ms) {
         { this_rule.fd.fd_num(), static_cast<short>(this_rule.direction), 0 });
       something_to_poll = true;
     } else {
-      pollfds.push_back(
-        { this_rule.fd.fd_num(), 0, 0 });  // placeholder --- we still want errors
+      pollfds.push_back({ this_rule.fd.fd_num(),
+                          0,
+                          0 });  // placeholder --- we still want errors
     }
     ++it;
   }
@@ -102,7 +104,8 @@ EventLoop::Result EventLoop::wait_next_event(const int timeout_ms) {
   // call poll -- wait until one of the fds satisfies one of the rules
   // (writeable/readable)
   try {
-    if (0 == SystemCall("poll", ::poll(pollfds.data(), pollfds.size(), timeout_ms))) {
+    if (0 == SystemCall("poll",
+                        ::poll(pollfds.data(), pollfds.size(), timeout_ms))) {
       return Result::Timeout;
     }
   } catch (unix_error const &e) {
@@ -113,21 +116,26 @@ EventLoop::Result EventLoop::wait_next_event(const int timeout_ms) {
 
   // go through the poll results
 
-  for (auto [it, idx] = make_pair(_rules.begin(), size_t(0)); it != _rules.end(); ++idx) {
+  for (auto [it, idx] = make_pair(_rules.begin(), size_t(0));
+       it != _rules.end();
+       ++idx) {
     const auto &this_pollfd = pollfds[idx];
 
-    const auto poll_error = static_cast<bool>(this_pollfd.revents & (POLLERR | POLLNVAL));
+    const auto poll_error =
+      static_cast<bool>(this_pollfd.revents & (POLLERR | POLLNVAL));
     if (poll_error) {
       throw runtime_error("EventLoop: error on polled file descriptor");
     }
 
     const auto &this_rule = *it;
-    const auto poll_ready = static_cast<bool>(this_pollfd.revents & this_pollfd.events);
+    const auto poll_ready =
+      static_cast<bool>(this_pollfd.revents & this_pollfd.events);
     const auto poll_hup = static_cast<bool>(this_pollfd.revents & POLLHUP);
     if (poll_hup && this_pollfd.events && !poll_ready) {
-      // if we asked for the status, and the _only_ condition was a hangup, this FD is
-      // defunct:
-      //   - if it was POLLIN and nothing is readable, no more will ever be readable
+      // if we asked for the status, and the _only_ condition was a hangup, this
+      // FD is defunct:
+      //   - if it was POLLIN and nothing is readable, no more will ever be
+      //   readable
       //   - if it was POLLOUT, it will not be writable again
       this_rule.cancel();
       it = _rules.erase(it);
@@ -135,14 +143,16 @@ EventLoop::Result EventLoop::wait_next_event(const int timeout_ms) {
     }
 
     if (poll_ready) {
-      // we only want to call callback if revents includes the event we asked for
+      // we only want to call callback if revents includes the event we asked
+      // for
       const auto count_before = this_rule.service_count();
       this_rule.callback();
 
       // only check for busy wait if we're not canceling or exiting
       if (count_before == this_rule.service_count() and this_rule.interest()) {
-        throw runtime_error("EventLoop: busy wait detected: callback did not read/write "
-                            "fd and is still interested");
+        throw runtime_error(
+          "EventLoop: busy wait detected: callback did not read/write "
+          "fd and is still interested");
       }
     }
 

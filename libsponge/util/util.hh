@@ -45,7 +45,9 @@ public:
 };
 
 //! Error-checking wrapper for most syscalls
-int SystemCall(const char *attempt, const int return_value, const int errno_mask = 0);
+int SystemCall(const char *attempt,
+               const int return_value,
+               const int errno_mask = 0);
 
 //! Version of SystemCall that takes a C++ std::string
 int SystemCall(const std::string &attempt,

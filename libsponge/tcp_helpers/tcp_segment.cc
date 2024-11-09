@@ -24,7 +24,8 @@ ParseResult TCPSegment::parse(const Buffer buffer,
 }
 
 size_t TCPSegment::length_in_sequence_space() const {
-  return payload().str().size() + (header().syn ? 1 : 0) + (header().fin ? 1 : 0);
+  return payload().str().size() + (header().syn ? 1 : 0) +
+         (header().fin ? 1 : 0);
 }
 
 //! \param[in] datagram_layer_checksum pseudo-checksum from the lower-layer protocol

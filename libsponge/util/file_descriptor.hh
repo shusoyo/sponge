@@ -14,11 +14,14 @@ class FileDescriptor {
   //! \details FileDescriptor objects contain a std::shared_ptr to a FDWrapper.
   class FDWrapper {
   public:
-    int _fd;                   //!< The file descriptor number returned by the kernel
-    bool _eof = false;         //!< Flag indicating whether FDWrapper::_fd is at EOF
-    bool _closed = false;      //!< Flag indicating whether FDWrapper::_fd has been closed
-    unsigned _read_count = 0;  //!< The number of times FDWrapper::_fd has been read
-    unsigned _write_count = 0;  //!< The numberof times FDWrapper::_fd has been written
+    int _fd;            //!< The file descriptor number returned by the kernel
+    bool _eof = false;  //!< Flag indicating whether FDWrapper::_fd is at EOF
+    bool _closed =
+      false;  //!< Flag indicating whether FDWrapper::_fd has been closed
+    unsigned _read_count =
+      0;  //!< The number of times FDWrapper::_fd has been read
+    unsigned _write_count =
+      0;  //!< The numberof times FDWrapper::_fd has been written
 
     //! Construct from a file descriptor number returned by the kernel
     explicit FDWrapper(const int fd);
@@ -41,8 +44,8 @@ class FileDescriptor {
   //! A reference-counted handle to a shared FDWrapper
   std::shared_ptr<FDWrapper> _internal_fd;
 
-  // private constructor used to duplicate the FileDescriptor (increase the reference
-  // count)
+  // private constructor used to duplicate the FileDescriptor (increase the
+  // reference count)
   explicit FileDescriptor(std::shared_ptr<FDWrapper> other_shared_ptr);
 
 protected:
@@ -65,7 +68,8 @@ public:
   std::string read(const size_t limit = std::numeric_limits<size_t>::max());
 
   //! Read up to `limit` bytes into `str` (caller can allocate storage)
-  void read(std::string &str, const size_t limit = std::numeric_limits<size_t>::max());
+  void read(std::string &str,
+            const size_t limit = std::numeric_limits<size_t>::max());
 
   //! Write a string, possibly blocking until all is written
   size_t write(const char *str, const bool write_all = true) {

@@ -27,7 +27,9 @@ private:
     _address {};  //!< A wrapped [sockaddr_storage](@ref man7::socket) containing the address.
 
   //! Constructor from ip/host, service/port, and hints to the resolver.
-  Address(const std::string &node, const std::string &service, const addrinfo &hints);
+  Address(const std::string &node,
+          const std::string &service,
+          const addrinfo &hints);
 
 public:
   //! Construct by resolving a hostname and servicename.

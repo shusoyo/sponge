@@ -28,7 +28,9 @@ protected:
 
   //! Wrapper around [setsockopt(2)](\ref man2::setsockopt)
   template <typename option_type>
-  void setsockopt(const int level, const int option, const option_type &option_value);
+  void setsockopt(const int level,
+                  const int option,
+                  const option_type &option_value);
 
 public:
   //! Bind a socket to a specified address with [bind(2)](\ref man2::bind), usually for
@@ -55,7 +57,8 @@ class UDPSocket : public Socket {
 protected:
   //! \brief Construct from FileDescriptor (used by TCPOverUDPSocketAdapter)
   //! \param[in] fd is the FileDescriptor from which to construct
-  explicit UDPSocket(FileDescriptor &&fd) : Socket(std::move(fd), AF_INET, SOCK_DGRAM) {}
+  explicit UDPSocket(FileDescriptor &&fd)
+    : Socket(std::move(fd), AF_INET, SOCK_DGRAM) {}
 
 public:
   //! Default: construct an unbound, unconnected UDP socket
@@ -92,7 +95,8 @@ class TCPSocket : public Socket {
 private:
   //! \brief Construct from FileDescriptor (used by accept())
   //! \param[in] fd is the FileDescriptor from which to construct
-  explicit TCPSocket(FileDescriptor &&fd) : Socket(std::move(fd), AF_INET, SOCK_STREAM) {}
+  explicit TCPSocket(FileDescriptor &&fd)
+    : Socket(std::move(fd), AF_INET, SOCK_STREAM) {}
 
 public:
   //! Default: construct an unbound, unconnected TCP socket

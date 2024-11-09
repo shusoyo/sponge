@@ -31,7 +31,8 @@ public:
     if (not _storage) {
       return {};
     }
-    return { _storage->data() + _starting_offset, _storage->size() - _starting_offset };
+    return { _storage->data() + _starting_offset,
+             _storage->size() - _starting_offset };
   }
 
   operator std::string_view() const {
@@ -118,7 +119,8 @@ public:
   //!@{
 
   //! \brief Construct from a std::string
-  BufferViewList(const std::string &str) : BufferViewList(std::string_view(str)) {}
+  BufferViewList(const std::string &str)
+    : BufferViewList(std::string_view(str)) {}
 
   //! \brief Construct from a C string (must be NULL-terminated)
   BufferViewList(const char *s) : BufferViewList(std::string_view(s)) {}

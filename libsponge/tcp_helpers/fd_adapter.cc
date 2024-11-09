@@ -19,38 +19,38 @@ using namespace std;
 //! the result that future outgoing segments go to the sender of the SYN segment.
 //! \returns a std::optional<TCPSegment> that is empty if the segment was invalid or unrelated
 optional<TCPSegment> TCPOverUDPSocketAdapter::read() {
-    auto datagram = _sock.recv();
+  auto datagram = _sock.recv();
 
-    // is it for us?
-    if (not listening() and (datagram.source_address != config().destination)) {
-        return {};
+  // is it for us?
+  if (not listening() and (datagram.source_address != config().destination)) {
+    return {};
+  }
+
+  // is the payload a valid TCP segment?
+  TCPSegment seg;
+  if (ParseResult::NoError != seg.parse(move(datagram.payload), 0)) {
+    return {};
+  }
+
+  // should we target this source in all future replies?
+  if (listening()) {
+    if (seg.header().syn and not seg.header().rst) {
+      config_mutable().destination = datagram.source_address;
+      set_listening(false);
+    } else {
+      return {};
     }
+  }
 
-    // is the payload a valid TCP segment?
-    TCPSegment seg;
-    if (ParseResult::NoError != seg.parse(move(datagram.payload), 0)) {
-        return {};
-    }
-
-    // should we target this source in all future replies?
-    if (listening()) {
-        if (seg.header().syn and not seg.header().rst) {
-            config_mutable().destination = datagram.source_address;
-            set_listening(false);
-        } else {
-            return {};
-        }
-    }
-
-    return seg;
+  return seg;
 }
 
 //! Serialize a TCP segment and send it as the payload of a UDP datagram.
 //! \param[in] seg is the TCP segment to write
 void TCPOverUDPSocketAdapter::write(TCPSegment &seg) {
-    seg.header().sport = config().source.port();
-    seg.header().dport = config().destination.port();
-    _sock.sendto(config().destination, seg.serialize(0));
+  seg.header().sport = config().source.port();
+  seg.header().dport = config().destination.port();
+  _sock.sendto(config().destination, seg.serialize(0));
 }
 
 //! Specialize LossyFdAdapter to TCPOverUDPSocketAdapter

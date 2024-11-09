@@ -8,7 +8,7 @@ AlignAfterOpenBracket: Align
 BinPackArguments: false
 BinPackParameters: false
 BreakConstructorInitializers: BeforeComma
-ColumnLimit: 110
+ColumnLimit: 80
 CommentPragmas: '^(!|NOLINT)'
 ConstructorInitializerAllOnOneLineOrOnePerLine: true
 IncludeBlocks: Regroup

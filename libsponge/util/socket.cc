@@ -142,14 +142,16 @@ void sendmsg_helper(const int fd_num,
   message.msg_iov = iovecs.data();
   message.msg_iovlen = iovecs.size();
 
-  const ssize_t bytes_sent = SystemCall("sendmsg", ::sendmsg(fd_num, &message, 0));
+  const ssize_t bytes_sent =
+    SystemCall("sendmsg", ::sendmsg(fd_num, &message, 0));
 
   if (size_t(bytes_sent) != payload.size()) {
     throw runtime_error("datagram payload too big for sendmsg()");
   }
 }
 
-void UDPSocket::sendto(const Address &destination, const BufferViewList &payload) {
+void UDPSocket::sendto(const Address &destination,
+                       const BufferViewList &payload) {
   sendmsg_helper(fd_num(), destination, destination.size(), payload);
   register_write();
 }
@@ -184,8 +186,9 @@ template <typename option_type>
 void Socket::setsockopt(const int level,
                         const int option,
                         const option_type &option_value) {
-  SystemCall("setsockopt",
-             ::setsockopt(fd_num(), level, option, &option_value, sizeof(option_value)));
+  SystemCall(
+    "setsockopt",
+    ::setsockopt(fd_num(), level, option, &option_value, sizeof(option_value)));
 }
 
 // allow local address to be reused sooner, at the cost of some robustness

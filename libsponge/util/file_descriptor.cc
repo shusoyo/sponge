@@ -36,7 +36,8 @@ FileDescriptor::FDWrapper::~FDWrapper() {
 }
 
 //! \param[in] fd is the file descriptor number returned by [open(2)](\ref man2::open) or similar
-FileDescriptor::FileDescriptor(const int fd) : _internal_fd(make_shared<FDWrapper>(fd)) {}
+FileDescriptor::FileDescriptor(const int fd)
+  : _internal_fd(make_shared<FDWrapper>(fd)) {}
 
 //! Private constructor used by duplicate()
 FileDescriptor::FileDescriptor(shared_ptr<FDWrapper> other_shared_ptr)
@@ -54,7 +55,8 @@ void FileDescriptor::read(std::string &str, const size_t limit) {
   const size_t size_to_read = min(BUFFER_SIZE, limit);
   str.resize(size_to_read);
 
-  ssize_t bytes_read = SystemCall("read", ::read(fd_num(), str.data(), size_to_read));
+  ssize_t bytes_read =
+    SystemCall("read", ::read(fd_num(), str.data(), size_to_read));
   if (limit > 0 && bytes_read == 0) {
     _internal_fd->_eof = true;
   }

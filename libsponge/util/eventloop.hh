@@ -19,8 +19,8 @@ public:
 
 private:
   using CallbackT = std::function<void(void)>;  //!< Callback for ready Rule::fd
-  using InterestT =
-    std::function<bool(void)>;  //!< `true` return indicates Rule::fd should be polled.
+  using InterestT = std::function<bool(
+    void)>;  //!< `true` return indicates Rule::fd should be polled.
 
   //! \brief Specifies a condition and callback that an EventLoop should handle.
   //! \details Created by calling EventLoop::add_rule() or EventLoop::add_cancelable_rule().
@@ -30,7 +30,8 @@ private:
     Direction
       direction;  //!< Direction::In for reading from fd, Direction::Out for writing to fd.
     CallbackT callback;  //!< A callback that reads or writes fd.
-    InterestT interest;  //!< A callback that returns `true` whenever fd should be polled.
+    InterestT
+      interest;  //!< A callback that returns `true` whenever fd should be polled.
     CallbackT
       cancel;  //!< A callback that is called when the rule is cancelled (e.g. on hangup)
 
@@ -40,7 +41,8 @@ private:
     unsigned int service_count() const;
   };
 
-  std::list<Rule> _rules {};  //!< All rules that have been added and not canceled.
+  std::list<Rule>
+    _rules {};  //!< All rules that have been added and not canceled.
 
 public:
   //! Returned by each call to EventLoop::wait_next_event.
@@ -48,7 +50,7 @@ public:
     Success,  //!< At least one Rule was triggered.
     Timeout,  //!< No rules were triggered before timeout.
     Exit  //!< All rules have been canceled or were uninterested; make no further calls to
-          //!< EventLoop::wait_next_event.
+    //!< EventLoop::wait_next_event.
   };
 
   //! Add a rule whose callback will be called when `fd` is ready in the specified Direction.
