@@ -20,11 +20,13 @@ private:
   // different approaches.
   size_t capacity_;
 
-  std::deque<std::string> buffer;
-  size_t byte_pushed_;
-  size_t byte_popped_;
-  bool end_input_ {};
-  bool _error {};  //!< Flag indicating that the stream suffered an error.
+  std::deque<std::string> buffer {};
+
+  size_t bytes_pushed_ {};
+  size_t bytes_popped_ {};
+
+  bool input_ended_ {};
+  bool error_ {};  //!< Flag indicating that the stream suffered an error.
 
 public:
   //! Construct a stream with room for `capacity` bytes.
@@ -46,7 +48,7 @@ public:
 
   //! Indicate that the stream suffered an error.
   void set_error() {
-    _error = true;
+    error_ = true;
   }
   //!@}
 
@@ -69,7 +71,7 @@ public:
 
   //! \returns `true` if the stream has suffered an error
   bool error() const {
-    return _error;
+    return error_;
   }
 
   //! \returns the maximum amount that can currently be read from the stream

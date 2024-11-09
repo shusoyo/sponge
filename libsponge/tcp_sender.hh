@@ -23,52 +23,53 @@ struct OutstandingSeg {
 
 class Retransmission {
 private:
-  bool _timer_state {};
-  unsigned int _retransmission_timeout {};
-  unsigned int _time {};
+  bool timer_state_ {};
+  unsigned int retransmission_timeout_ {};
+  unsigned int time_ {};
 
-  unsigned int _consecutive_retransmissions {};
+  unsigned int consecutive_retransmissions_ {};
 
-  uint64_t _bytes_in_flight { 0 };
+  uint64_t bytes_in_flight_ { 0 };
 
-  std::queue<OutstandingSeg> _outstandings {};
+  std::queue<OutstandingSeg> outstandings_ {};
 
-  std::queue<TCPSegment> &_segments_out;
+  std::queue<TCPSegment> &segments_out_;
 
-  bool _finished {};
+  bool finished_ {};
 
 public:
   Retransmission(std::queue<TCPSegment> &out);
+
   void check(const size_t duration, uint64_t window_size);
 
   void sweep(const uint64_t ack_no);
 
   void start_timer(unsigned int retransmission_timeout) {
-    if (not _timer_state) {
-      _timer_state = true;
-      _retransmission_timeout = retransmission_timeout;
-      _consecutive_retransmissions = 0;
+    if (not timer_state_) {
+      timer_state_ = true;
+      retransmission_timeout_ = retransmission_timeout;
+      consecutive_retransmissions_ = 0;
     }
   }
 
   void restart_timer(unsigned int retransmission_timeout) {
-    _timer_state = not _outstandings.empty();
-    _time = 0;
-    _retransmission_timeout = retransmission_timeout;
-    _consecutive_retransmissions = 0;
+    timer_state_ = not outstandings_.empty();
+    time_ = 0;
+    retransmission_timeout_ = retransmission_timeout;
+    consecutive_retransmissions_ = 0;
   }
 
   void add(const OutstandingSeg &out_seg) {
-    _outstandings.push(out_seg);
-    _bytes_in_flight += out_seg.seg.length_in_sequence_space();
+    outstandings_.push(out_seg);
+    bytes_in_flight_ += out_seg.seg.length_in_sequence_space();
   }
 
   uint64_t bytes_in_flight() const {
-    return _bytes_in_flight;
+    return bytes_in_flight_;
   }
 
   unsigned int consecutive_retransmissions() const {
-    return _consecutive_retransmissions;
+    return consecutive_retransmissions_;
   }
 };
 

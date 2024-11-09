@@ -1,6 +1,7 @@
 #include "byte_stream.hh"
 
 #include <cstddef>
+#include <string>
 
 // Dummy implementation of a flow-controlled in-memory byte stream.
 
@@ -10,15 +11,13 @@
 // You will need to add private members to the class declaration in
 // `byte_stream.hh`
 
-template <typename... Targs>
-void DUMMY_CODE(Targs &&.../* unused */) {}
+using std::string;
 
-ByteStream::ByteStream(const size_t capacity)
-  : capacity_(capacity), buffer(), byte_pushed_(), byte_popped_() {}
+ByteStream::ByteStream(const size_t capacity) : capacity_(capacity) {}
 
-size_t ByteStream::write(const std::string &data) {
+size_t ByteStream::write(const string &data) {
   size_t can_write_size = std::min(remaining_capacity(), data.size());
-  byte_pushed_ += can_write_size;
+  bytes_pushed_ += can_write_size;
 
   if (can_write_size > 0) {
     buffer.emplace_back(data.substr(0, can_write_size));
@@ -28,8 +27,8 @@ size_t ByteStream::write(const std::string &data) {
 }
 
 //! \param[in] len bytes will be copied from the output side of the buffer
-std::string ByteStream::peek_output(const size_t len) const {
-  std::string output {};
+string ByteStream::peek_output(const size_t len) const {
+  string output {};
   size_t length = len;
 
   for (auto x : buffer) {
@@ -60,28 +59,28 @@ void ByteStream::pop_output(const size_t len) {
     }
   }
 
-  byte_popped_ += len;
+  bytes_popped_ += len;
 }
 
 //! Read (i.e., copy and then pop) the next "len" bytes of the stream
 //! \param[in] len bytes will be popped and returned
 //! \returns a string
-std::string ByteStream::read(const size_t len) {
-  std::string s = peek_output(len);
+string ByteStream::read(const size_t len) {
+  string s = peek_output(len);
   pop_output(len);
   return s;
 }
 
 void ByteStream::end_input() {
-  end_input_ = true;
+  input_ended_ = true;
 }
 
 bool ByteStream::input_ended() const {
-  return end_input_;
+  return input_ended_;
 }
 
 size_t ByteStream::buffer_size() const {
-  return byte_pushed_ - byte_popped_;
+  return bytes_pushed_ - bytes_popped_;
 }
 
 bool ByteStream::buffer_empty() const {
@@ -89,15 +88,15 @@ bool ByteStream::buffer_empty() const {
 }
 
 bool ByteStream::eof() const {
-  return (byte_popped_ == byte_pushed_) and input_ended();
+  return (bytes_popped_ == bytes_pushed_) and input_ended();
 }
 
 size_t ByteStream::bytes_written() const {
-  return byte_pushed_;
+  return bytes_pushed_;
 }
 
 size_t ByteStream::bytes_read() const {
-  return byte_popped_;
+  return bytes_popped_;
 }
 
 size_t ByteStream::remaining_capacity() const {

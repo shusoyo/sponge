@@ -17,13 +17,13 @@
 //! remote TCPSender.
 class TCPReceiver {
   //! Our data structure for re-assembling bytes.
-  StreamReassembler _reassembler;
+  StreamReassembler reassembler_;
 
   //! The maximum number of bytes we'll store.
-  size_t _capacity;
+  size_t capacity_;
 
   WrappingInt32 isn;
-  bool is_start;
+  bool is_start {};
 
 public:
   //! \brief Construct a TCP receiver
@@ -31,7 +31,7 @@ public:
   //! \param capacity the maximum number of bytes that the receiver will
   //!                 store in its buffers at any give time.
   TCPReceiver(const size_t capacity)
-    : _reassembler(capacity), _capacity(capacity), isn({}), is_start() {}
+    : reassembler_(capacity), capacity_(capacity), isn({}) {}
 
   //! \name Accessors to provide feedback to the remote TCPSender
   //!@{
@@ -58,7 +58,7 @@ public:
 
   //! \brief number of bytes stored but not yet reassembled
   size_t unassembled_bytes() const {
-    return _reassembler.unassembled_bytes();
+    return reassembler_.unassembled_bytes();
   }
 
   //! \brief handle an inbound segment
@@ -67,10 +67,10 @@ public:
   //! \name "Output" interface for the reader
   //!@{
   ByteStream &stream_out() {
-    return _reassembler.stream_out();
+    return reassembler_.stream_out();
   }
   const ByteStream &stream_out() const {
-    return _reassembler.stream_out();
+    return reassembler_.stream_out();
   }
   //!@}
 };

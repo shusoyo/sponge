@@ -8,14 +8,14 @@
 //! \note This is used to express TCP sequence numbers (seqno) and acknowledgment numbers (ackno)
 class WrappingInt32 {
 private:
-  uint32_t _raw_value;  //!< The raw 32-bit stored integer
+  uint32_t raw_value_;  //!< The raw 32-bit stored integer
 
 public:
   //! Construct from a raw 32-bit unsigned integer
-  explicit WrappingInt32(uint32_t raw_value) : _raw_value(raw_value) {}
+  explicit WrappingInt32(uint32_t raw_value) : raw_value_(raw_value) {}
 
   uint32_t raw_value() const {
-    return _raw_value;
+    return raw_value_;
   }  //!< Access raw stored value
 };
 

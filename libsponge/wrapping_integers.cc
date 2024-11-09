@@ -9,9 +9,6 @@
 // For Lab 2, please replace with a real implementation that passes the
 // automated checks run by `make check_lab2`.
 
-template <typename... Targs>
-void DUMMY_CODE(Targs &&.../* unused */) {}
-
 constexpr uint64_t MOD = 1ll << 32;
 //! Transform an "absolute" 64-bit sequence number (zero-indexed) into a
 //! WrappingInt32 \param n The input absolute 64-bit sequence number \param isn

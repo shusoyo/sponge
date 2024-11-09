@@ -5,7 +5,10 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <optional>
 #include <string>
+
+using std::optional, std::vector;
 
 //! \brief A class that assembles a series of excerpts from a byte stream (possibly out of order,
 //! possibly overlapping) into an in-order byte stream.
@@ -13,13 +16,15 @@ class StreamReassembler {
 private:
   // Your code here -- add private members as necessary.
 
-  ByteStream _output;  //!< The reassembled in-order byte stream
-  size_t _capacity;    //!< The maximum number of bytes
-  size_t _byte_pending;
-  size_t next_byte;
-  std::vector<std::pair<char, bool>> buffer;
-  int64_t end_index;
-  bool is_get_end;
+  ByteStream output_;  //!< The reassembled in-order byte stream
+  size_t capacity_;    //!< The maximum number of bytes
+  size_t byte_pending_ {};
+  size_t next_byte_ {};
+
+  // the first char is a byte, the second char is bool
+  vector<optional<char>> buffer_ {};
+  int64_t end_index_ {};
+  bool is_get_end_ {};
 
 public:
   //! \brief Construct a `StreamReassembler` that will store up to `capacity` bytes.
@@ -40,10 +45,10 @@ public:
   //! \name Access the reassembled byte stream
   //!@{
   const ByteStream &stream_out() const {
-    return _output;
+    return output_;
   }
   ByteStream &stream_out() {
-    return _output;
+    return output_;
   }
   //!@}
 

@@ -14,9 +14,6 @@
 // For Lab 3, please replace with a real implementation that passes the
 // automated checks run by `make check_lab3`.
 
-template <typename... Targs>
-void DUMMY_CODE(Targs &&.../* unused */) {}
-
 //! \param[in] capacity the capacity of the outgoing byte stream
 //! \param[in] retx_timeout the initial amount of time to wait before
 //! retransmitting the oldest outstanding segment \param[in] fixed_isn the
@@ -113,30 +110,30 @@ void TCPSender::send_empty_segment() {
   _segments_out.push(seg);
 }
 
-Retransmission::Retransmission(std::queue<TCPSegment> &out) : _segments_out(out) {}
+Retransmission::Retransmission(std::queue<TCPSegment> &out) : segments_out_(out) {}
 
 void Retransmission::check(const size_t duration, const uint64_t window_size) {
-  if (not _timer_state) {
+  if (not timer_state_) {
     return;
   }
   // std::cerr << window_size << "CALLED\n";
 
-  _time += duration;
-  if (_time >= _retransmission_timeout) {
-    _segments_out.emplace(_outstandings.front().seg);
-    _time = 0;
+  time_ += duration;
+  if (time_ >= retransmission_timeout_) {
+    segments_out_.emplace(outstandings_.front().seg);
+    time_ = 0;
     if (window_size > 0) {
-      _consecutive_retransmissions += 1;
-      _retransmission_timeout = _retransmission_timeout * 2;
+      consecutive_retransmissions_ += 1;
+      retransmission_timeout_ = retransmission_timeout_ * 2;
     }
   }
 }
 
 void Retransmission::sweep(const uint64_t ack_no) {
-  while (not _outstandings.empty() and _outstandings.front().end_seq <= ack_no) {
-    const auto &seg = _outstandings.front().seg;
-    _bytes_in_flight -= seg.length_in_sequence_space();
+  while (not outstandings_.empty() and outstandings_.front().end_seq <= ack_no) {
+    const auto &seg = outstandings_.front().seg;
+    bytes_in_flight_ -= seg.length_in_sequence_space();
 
-    _outstandings.pop();
+    outstandings_.pop();
   }
 }

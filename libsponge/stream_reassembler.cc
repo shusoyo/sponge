@@ -1,5 +1,7 @@
 #include "stream_reassembler.hh"
 
+#include "buffer.hh"
+
 #include <cstddef>
 #include <cstdint>
 
@@ -11,97 +13,99 @@
 // You will need to add private members to the class declaration in
 // `stream_reassembler.hh`
 
+using std::string, std::string_view;
+
 StreamReassembler::StreamReassembler(const size_t capacity)
-  : _output(capacity)
-  , _capacity(capacity)
-  , _byte_pending()
-  , next_byte()
-  , buffer()
-  , end_index()
-  , is_get_end() {}
+  : output_(capacity), capacity_(capacity) {}
 
 //! \details This function accepts a substring (aka a segment) of bytes,
 //! possibly out-of-order, from the logical stream, and assembles any newly
 //! contiguous substrings and writes them into the output stream in order.
-void StreamReassembler::push_substring(const std::string &data,
+void StreamReassembler::push_substring(const string &data,
                                        const size_t index,
                                        const bool eof) {
   using i64 = long long;
-  i64 difference = next_byte - index;
+  i64 difference = next_byte_ - index;
 
-  if (difference == 0 or (difference > 0 and difference < i64(data.size()))) {
-    std::string_view view(data);
+  // 1:                     2:
+  //  next_byte               next_byte
+  //     ↓                    ↓ ↓ ↓ ↓
+  //     - - - -              - - - -
+  //     ↑                    ↑
+  //    index                 index
+  if (difference == 0 or
+      (difference > 0 and difference < static_cast<i64>(data.size()))) {
+    string_view view(data);
     view = view.substr(
       difference,
-      std::min(_output.remaining_capacity(), data.size() - size_t(difference)));
+      std::min(output_.remaining_capacity(), data.size() - size_t(difference)));
 
-    for (size_t i = 0; i < view.size() && next_byte + i < buffer.size(); i++) {
-      if (buffer[next_byte + i].second) {
-        _byte_pending -= 1;
+    for (size_t i = 0; i < view.size() && next_byte_ + i < buffer_.size(); i++) {
+      if (buffer_[next_byte_ + i].has_value()) {
+        byte_pending_ -= 1;
       }
     }
 
-    std::string will_write { view };
-    next_byte += view.size();
+    string will_write { view };
+    next_byte_ += view.size();
 
-    for (size_t i = next_byte; i < buffer.size(); i++) {
-      const auto &[value, state] = buffer[i];
-      if (state == false) {
+    for (size_t i = next_byte_; i < buffer_.size(); i++) {
+      if (not buffer_[i].has_value()) {
         break;
       }
 
+      const auto value = buffer_[i].value();
       will_write += value;
-      next_byte += 1;
-      _byte_pending -= 1;
+      next_byte_ += 1;
+      byte_pending_ -= 1;
     }
 
-    _output.write(will_write);
+    output_.write(will_write);
   }
 
-  if (difference < 0 and _output.remaining_capacity() + next_byte > index) {
-    if (buffer.size() < index + data.size()) {
-      buffer.resize(index + data.size() + 1);
+  if (difference < 0 and output_.remaining_capacity() + next_byte_ > index) {
+    if (buffer_.size() < index + data.size()) {
+      buffer_.resize(index + data.size() + 1);
     }
 
     size_t length =
-      std::min(data.size(), _output.remaining_capacity() + next_byte - index);
+      std::min(data.size(), output_.remaining_capacity() + next_byte_ - index);
 
     for (size_t i = 0; i < length; i++) {
-      auto &[value, state] = buffer[i + index];
-      value = data[i];
+      auto &chr = buffer_[i + index];
 
-      if (state) {
-        _byte_pending -= 1;
+      if (chr.has_value()) {
+        byte_pending_ -= 1;
       }
 
-      state = true;
+      chr.emplace(data[i]);
     }
 
-    _byte_pending += length;
+    byte_pending_ += length;
   }
 
   if (eof) {
-    end_index = index + data.size() - 1;
-    is_get_end = true;
+    end_index_ = index + data.size() - 1;
+    is_get_end_ = true;
   }
 
-  if (is_get_end && next_byte == static_cast<size_t>(end_index + 1)) {
-    _output.end_input();
+  if (is_get_end_ && next_byte_ == static_cast<size_t>(end_index_ + 1)) {
+    output_.end_input();
   }
 }
 
 size_t StreamReassembler::unassembled_bytes() const {
-  return _byte_pending;
+  return byte_pending_;
 }
 
 bool StreamReassembler::empty() const {
-  return _byte_pending == 0;
+  return byte_pending_ == 0;
 }
 
 size_t StreamReassembler::available_capacity() const {
-  return _output.remaining_capacity() - _byte_pending;
+  return output_.remaining_capacity() - byte_pending_;
 }
 
 uint64_t StreamReassembler::checkpoint() const {
-  return next_byte;
+  return next_byte_;
 }
