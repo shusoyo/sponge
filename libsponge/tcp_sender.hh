@@ -9,7 +9,6 @@
 #include <cstdint>
 // #include <functional>
 // #include <map>
-#include <iostream>
 #include <optional>
 #include <queue>
 
@@ -38,7 +37,7 @@ private:
   bool finished_ {};
 
 public:
-  Retransmission(std::queue<TCPSegment> &out);
+  Retransmission() = default;
 
   void check(const size_t duration, uint64_t window_size);
 
@@ -71,6 +70,10 @@ public:
   unsigned int consecutive_retransmissions() const {
     return consecutive_retransmissions_;
   }
+
+  std::queue<TCPSegment> &segments_out() {
+    return segments_out_;
+  }
 };
 
 //! \brief The "sender" part of a TCP implementation.
@@ -85,7 +88,7 @@ private:
   WrappingInt32 _isn;
 
   //! outbound queue of segments that the TCPSender wants sent
-  std::queue<TCPSegment> _segments_out {};
+  // std::queue<TCPSegment> _segments_out {};
 
   //! retransmission timer for the connection
   unsigned int _initial_retransmission_timeout;
@@ -155,7 +158,7 @@ public:
   //! which will need to fill in the fields that are set by the TCPReceiver
   //! (ackno and window size) before sending.
   std::queue<TCPSegment> &segments_out() {
-    return _segments_out;
+    return _resender.segments_out();
   }
   //!@}
 

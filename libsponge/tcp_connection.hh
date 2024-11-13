@@ -6,6 +6,8 @@
 #include "tcp_sender.hh"
 #include "tcp_state.hh"
 
+#include <cstddef>
+
 //! \brief A complete endpoint of a TCP connection
 class TCPConnection {
 private:
@@ -21,6 +23,13 @@ private:
   //! in case the remote TCPConnection doesn't know we've received its whole stream?
   bool _linger_after_streams_finish { true };
 
+  size_t ms_since_last_receive_seg_ {};
+  bool is_closed {};
+
+  void send_reset_segment();
+  void unclean_shutdown();
+  void clean_shutdown();
+
 public:
   //! \name "Input" interface for the writer
   //!@{
@@ -31,6 +40,9 @@ public:
   //! \brief Write data to the outbound byte stream, and send it over TCP if possible
   //! \returns the number of bytes from `data` that were actually written.
   size_t write(const std::string &data);
+
+  //! \brief send segment
+  void send_segments();
 
   //! \returns the number of `bytes` that can be written right now.
   size_t remaining_outbound_capacity() const;

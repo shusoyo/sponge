@@ -7,7 +7,6 @@
 #include <cmath>
 #include <cstddef>
 #include <cstdint>
-#include <iostream>
 #include <random>
 // Dummy implementation of a TCP sender
 
@@ -24,7 +23,7 @@ TCPSender::TCPSender(const size_t capacity,
   : _isn(fixed_isn.value_or(WrappingInt32 { std::random_device()() }))
   , _initial_retransmission_timeout { retx_timeout }
   , _stream(capacity)
-  , _resender(_segments_out) {}
+  , _resender() {}
 
 uint64_t TCPSender::bytes_in_flight() const {
   return _resender.bytes_in_flight();
@@ -36,7 +35,7 @@ void TCPSender::fill_window() {
   }
 
   auto send_seg = [&](TCPSegment &seg) {
-    _segments_out.push(seg);
+    segments_out().push(seg);
     _resender.add(OutstandingSeg(next_seqno_absolute(), seg));
     _next_seqno += seg.length_in_sequence_space();
     _resender.start_timer(_initial_retransmission_timeout);
@@ -108,17 +107,13 @@ unsigned int TCPSender::consecutive_retransmissions() const {
 void TCPSender::send_empty_segment() {
   TCPSegment seg;
   seg.header().set_seqno(next_seqno());
-  _segments_out.push(seg);
+  segments_out().push(seg);
 }
-
-Retransmission::Retransmission(std::queue<TCPSegment> &out)
-  : segments_out_(out) {}
 
 void Retransmission::check(const size_t duration, const uint64_t window_size) {
   if (not timer_state_) {
     return;
   }
-  // std::cerr << window_size << "CALLED\n";
 
   time_ += duration;
   if (time_ >= retransmission_timeout_) {
